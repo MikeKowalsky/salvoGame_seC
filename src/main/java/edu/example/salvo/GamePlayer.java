@@ -27,6 +27,10 @@ public class GamePlayer {
         this.player = player;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public Player getPlayer() {
         return player;
     }
