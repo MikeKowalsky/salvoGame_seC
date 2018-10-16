@@ -2,6 +2,7 @@ package edu.example.salvo;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 public class GamePlayer {
@@ -19,6 +20,9 @@ public class GamePlayer {
     private Game game;
 
     private Date creationDate = new Date();
+
+    @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
+    Set<Ship> shipSet;
 
     GamePlayer(){}
 
@@ -45,5 +49,10 @@ public class GamePlayer {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public void addShip (Ship ship) {
+        ship.setGamePlayer(this);
+        shipSet.add(ship);
     }
 }
