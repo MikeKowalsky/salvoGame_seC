@@ -60,4 +60,8 @@ public class GamePlayer {
     public Set<Ship> getShipSet() {
         return shipSet;
     }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
 }
