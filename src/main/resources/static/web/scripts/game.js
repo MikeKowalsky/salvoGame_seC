@@ -1,30 +1,26 @@
-const request = async () => {
-    const response = await fetch('/api/game_view/13')
-    const json = await response.json()
-//    console.log(json)
-    main(json)
-}
 
-onload = (() => request() )()
-
-const main = (data) => {
+const basicInfo = (data) => {
     console.log({data})
-
-    // const list = document.querySelector('#list')
-
-    // list.innerHTML = data.map(game => {
-    //     const { game_id, created, gamePlayers } = game
-
-    //     const player01 = (gamePlayers[0]) ? gamePlayers[0].player.email : ' -- '
-    //     const player02 = (gamePlayers[1]) ? gamePlayers[1].player.email : ' -- '            
-        
-    //     return `
-    //             <li>
-    //                 <p class="font-weight-bold">Game: ${game_id}, created ${created}</p>
-    //                 <p class="ml-3">Player 1: ${player01}</p>
-    //                 <p class="ml-3">Player 2: ${player02}</p>
-    //             </li>
-    //             `
-    // }).join('')
-
 }
+
+const request = async (url) => {
+    // const response = await fetch('/api/game_view/13')
+    const response = await fetch(url)
+    const json = await response.json()
+    // console.log(json)
+    basicInfo(json)
+}
+
+const getApiURL = () => {
+    const urlSearchPart = window.location.search
+    const tempArray = urlSearchPart.split('=')
+    const myVar = tempArray[1]
+    return `/api/game_view/${myVar}`
+}
+
+const main = () => {
+    const url = getApiURL()
+    request(url)
+}
+
+onload = (() => main() )()
