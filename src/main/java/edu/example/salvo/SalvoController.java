@@ -61,6 +61,7 @@ public class SalvoController {
         GamePlayer opponentGP = getOpponentGP(currentGP);
         Map<String, Object> singleGameView = new HashMap<>();
         singleGameView.put("gp_id", currentGP.getId());
+        singleGameView.put("game_id", currentGP.getGame().getId());
         singleGameView.put("created", currentGP.getCreationDate());
         singleGameView.put("player", createGPDOforGameView(currentGP));
         singleGameView.put("opponent", createGPDOforGameView(opponentGP));
