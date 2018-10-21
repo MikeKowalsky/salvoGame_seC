@@ -2,6 +2,7 @@ package edu.example.salvo;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -22,7 +23,10 @@ public class GamePlayer {
     private Date creationDate = new Date();
 
     @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
-    Set<Ship> shipSet;
+    Set<Ship> shipSet  = new HashSet<>();
+
+    @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
+    Set<Salvo> salvoSet  = new HashSet<>();
 
     GamePlayer(){}
 
@@ -51,8 +55,25 @@ public class GamePlayer {
         this.game = game;
     }
 
-    public void addShip (Ship ship) {
+    public void addShip(Ship ship) {
         ship.setGamePlayer(this);
         shipSet.add(ship);
+    }
+
+    public void addSalvo(Salvo salvo) {
+        salvo.setGamePlayer(this);
+        salvoSet.add(salvo);
+    }
+
+    public Set<Ship> getShipSet() {
+        return shipSet;
+    }
+
+    public Set<Salvo> getSalvoSet() {
+        return salvoSet;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
     }
 }

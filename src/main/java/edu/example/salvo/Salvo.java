@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Ship {
+public class Salvo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String type;
+    private long turnNo;
 
     @ElementCollection
     @Column(name="location")
@@ -20,10 +20,10 @@ public class Ship {
     @JoinColumn(name = "gamePlayerId")
     private GamePlayer gamePlayer;
 
-    public Ship(){}
+    public Salvo(){}
 
-    public Ship (String type) {
-        this.type = type;
+    public Salvo(long turnNo){
+        this.turnNo = turnNo;
     }
 
     public void setLocations(List<String> locations) {
@@ -34,8 +34,12 @@ public class Ship {
         this.gamePlayer = gamePlayer;
     }
 
-    public String getType() {
-        return type;
+    public long getId() {
+        return id;
+    }
+
+    public long getTurnNo() {
+        return turnNo;
     }
 
     public List<String> getLocations() {
