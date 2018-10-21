@@ -19,7 +19,8 @@ public class SalvoApplication {
 	public CommandLineRunner initData(PlayerRepository playerRepo,
 									  GameRepository gameRepo,
 									  GamePlayerRepository gamePlayerRepo,
-									  ShipRepository shipRepo) {
+									  ShipRepository shipRepo,
+									  SalvoRepository salvoRepo) {
 		return (args) -> {
 
 			Player p1 = new Player("Jack Bauer", "j.bauer@ctu.gov");
@@ -123,6 +124,41 @@ public class SalvoApplication {
 			shipRepo.save(s08);
 			shipRepo.save(s09);
 			shipRepo.save(s10);
+
+			Salvo slv01 = new Salvo(1);
+			slv01.setLocations(new ArrayList<String>(Arrays.asList("E6", "F6", "G6", "H6", "A2")));
+			gp1.addSalvo(slv01);
+			Salvo slv02 = new Salvo(2);
+			slv02.setLocations(new ArrayList<String>(Arrays.asList("A3", "A4", "A5", "B7", "B8")));
+			gp1.addSalvo(slv02);
+			Salvo slv03 = new Salvo(3);
+			slv03.setLocations(new ArrayList<String>(Arrays.asList("B5", "D5", "C5", "A9", "A8")));
+			gp1.addSalvo(slv03);
+			Salvo slv04 = new Salvo(4);
+			slv04.setLocations(new ArrayList<String>(Arrays.asList("C6", "C7", "A1", "C1", "C2")));
+			gp1.addSalvo(slv04);
+
+			Salvo slv05 = new Salvo(1);
+			slv05.setLocations(new ArrayList<String>(Arrays.asList("D5", "E5", "F5", "G5", "H5")));
+			gp2.addSalvo(slv05);
+			Salvo slv06 = new Salvo(2);
+			slv06.setLocations(new ArrayList<String>(Arrays.asList("D2", "E2", "F2", "G2", "H8")));
+			gp2.addSalvo(slv06);
+			Salvo slv07 = new Salvo(3);
+			slv07.setLocations(new ArrayList<String>(Arrays.asList("H2", "H3", "H4", "A2", "A3")));
+			gp2.addSalvo(slv07);
+			Salvo slv08 = new Salvo(4);
+			slv08.setLocations(new ArrayList<String>(Arrays.asList("B4", "B5", "C10", "D10", "E10")));
+			gp2.addSalvo(slv08);
+
+			salvoRepo.save(slv01);
+			salvoRepo.save(slv02);
+			salvoRepo.save(slv03);
+			salvoRepo.save(slv04);
+			salvoRepo.save(slv05);
+			salvoRepo.save(slv06);
+			salvoRepo.save(slv07);
+			salvoRepo.save(slv08);
 
 		};
 	}
