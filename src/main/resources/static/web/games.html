@@ -10,8 +10,28 @@
     <div class="container">
 
         <h1 class="my-4 text-warning">Salvo game!</h1>
+        
+        <div class="d-flex">
+            <button type="button" class="btn btn-info mr-4" onClick="handleClick('gameList')">Game List</button>
+            <button type="button" class="btn btn-info" onClick="handleClick('leaderboard')">Leaderboard</button>
+        </div>
 
-        <ol id="list"></ol>
+        <div id="gameList" class="my-4">
+            <ol id="list"></ol>
+        </div>
+        <div id="leaderboard" class="my-4">
+            <table class="table">
+                <thead>
+                    <tr class="table-info">
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Results</th>
+                        <th>Total scores</th>
+                    </tr>
+                </thead>
+                <tbody id="lboard"></tbody>
+            </table>
+        </div>
     
     </div>
    

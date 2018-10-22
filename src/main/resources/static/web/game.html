@@ -19,7 +19,6 @@
         </div>
 
         <div id="vueGrid" class="mt-4 row">
-
             <div class="col-sm-12 col-md-6">
                 <p class="h5">Your battlefield</p>
                 <div>
@@ -35,26 +34,22 @@
                     </table>
                 </div>
             </div>
-
             <div class="col-sm-12 col-md-6">
-                    <p class="h5">{{ dataIn.opponent.name }} battlefield</p>
-                    <div>
-                        <table id="opponentsGrid">
-                            <tr v-for="(letter, index) in columnArr" :key="index">
-                                <td 
-                                    v-for="(number, i) in rowArr" :key="i">
-                                    <p v-if="letter == '' || number == ''">
-                                        {{ letter }}{{ number }}
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                <p class="h5">{{ dataIn.opponent.name }} battlefield</p>
+                <div>
+                    <table id="opponentsGrid">
+                        <tr v-for="(letter, index) in columnArr" :key="index">
+                            <td 
+                                v-for="(number, i) in rowArr" :key="i">
+                                <p v-if="letter == '' || number == ''">
+                                    {{ letter }}{{ number }}
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
-
-
+            </div>
         </div>
-    
     </div>
    
     <script src="scripts/vue.js"></script>

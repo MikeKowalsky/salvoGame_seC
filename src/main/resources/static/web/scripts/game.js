@@ -21,14 +21,14 @@ const printGrids = (data) => {
                 const idsArray = []
                 let cellsArray;
                 
-                playerType == 'player' ?
-                    cellsArray = Array.from(document.querySelector('#playersGrid').querySelectorAll('td')) :
-                    cellsArray = Array.from(document.querySelector('#opponentsGrid').querySelectorAll('td'))
+                playerType == 'player'
+                    ? cellsArray = Array.from(document.querySelector('#playersGrid').querySelectorAll('td'))
+                    : cellsArray = Array.from(document.querySelector('#opponentsGrid').querySelectorAll('td'))
 
                 this.columnArr.forEach((letter) => {
-                    playerType == 'player' ?
-                        this.rowArr.forEach((number) => idsArray.push(`${ letter }${ number }`)) :
-                        this.rowArr.forEach((number) => idsArray.push(`s${ letter }${ number }`))
+                    playerType == 'player' 
+                        ? this.rowArr.forEach((number) => idsArray.push(`${ letter }${ number }`))
+                        : this.rowArr.forEach((number) => idsArray.push(`s${ letter }${ number }`))
                 })
 
                 idsArray.forEach((id, index) => cellsArray[index].setAttribute('id', id))
@@ -52,10 +52,9 @@ const printGrids = (data) => {
                         salvoSet.locations.forEach(loc => {
                             const td = document.querySelector(`#${ loc }`)
                             td.innerHTML = salvoSet.turn
-                            td.classList.contains('shipLoc') ?
-                                td.classList.add('hitLoc') :
-                                td.classList.add('salvoLoc')
-
+                            td.classList.contains('shipLoc')
+                                ? td.classList.add('hitLoc')
+                                : td.classList.add('salvoLoc')
                         })
                     }
                 })
@@ -85,10 +84,10 @@ const basicInfo = (data) => {
 const request = async (url) => {
     // const response = await fetch('/api/game_view/13')
     const response = await fetch(url)
-    const json = await response.json()
-    console.log({json})
-    basicInfo(json)
-    printGrids(json)
+    const data = await response.json()
+    console.log({data})
+    basicInfo(data)
+    printGrids(data)
 }
 
 const getApiURL = () => {
