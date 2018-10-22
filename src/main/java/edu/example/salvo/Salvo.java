@@ -42,6 +42,10 @@ public class Salvo {
         return turnNo;
     }
 
+    public Player getPlayer(){
+        return this.gamePlayer.getPlayer();
+    }
+
     public List<String> getLocations() {
         return locations;
     }

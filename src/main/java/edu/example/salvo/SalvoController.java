@@ -5,10 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequestMapping("/api")
 @RestController
@@ -66,6 +63,7 @@ public class SalvoController {
         singleGameView.put("player", createGPDOforGameView(currentGP));
         singleGameView.put("opponent", createGPDOforGameView(opponentGP));
         singleGameView.put("ships", createShipList(currentGP));
+        singleGameView.put("salvoes", createSalvoList(currentGP, opponentGP));
         return singleGameView;
     }
 
@@ -93,10 +91,27 @@ public class SalvoController {
         gp.shipSet.stream().forEach(ship -> {
             Map<String, Object> singleShip = new HashMap<>();
             singleShip.put("type", ship.getType());
-            singleShip.put("location", ship.getLocations());
+            singleShip.put("locations", ship.getLocations());
             shipList.add(singleShip);
         });
         return shipList;
+    }
+
+    private List<Object> createSalvoList(GamePlayer currentGp, GamePlayer opponentGP){
+        List<Object> salvoList = new ArrayList<>();
+        currentGp.salvoSet.stream()
+                          .forEach(salvo -> salvoList.add(createSingleSalvoMap(salvo)));
+        opponentGP.salvoSet.stream()
+                           .forEach(salvo -> salvoList.add(createSingleSalvoMap(salvo)));
+        return salvoList;
+    }
+
+    private Map<String, Object> createSingleSalvoMap(Salvo salvo){
+        Map<String, Object> singleSalvo = new HashMap<>();
+        singleSalvo.put("player_id", salvo.getPlayer().getId());
+        singleSalvo.put("turn", salvo.getTurnNo());
+        singleSalvo.put("locations", salvo.getLocations());
+        return singleSalvo;
     }
 
 }

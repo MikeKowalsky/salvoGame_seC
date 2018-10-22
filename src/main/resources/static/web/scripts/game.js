@@ -27,7 +27,7 @@ const printPlayersGrid = (data) => {
             },
             markShips(){
                 const shipsLocations = []
-                this.dataIn.ships.forEach(ship => ship.location.forEach(loc => shipsLocations.push(loc)))
+                this.dataIn.ships.forEach(ship => ship.locations.forEach(loc => shipsLocations.push(loc)))
                 console.log(shipsLocations)
                 shipsLocations.forEach(loc => {
                     document.querySelector(`#${ loc }`).classList.add('shipLoc')
