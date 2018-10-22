@@ -15,6 +15,9 @@ public class SalvoController {
     private GameRepository gameRepo;
 
     @Autowired
+    private PlayerRepository playerRepo;
+
+    @Autowired
     private GamePlayerRepository gamePlayerRepo;
 
     @RequestMapping("/games")
@@ -118,6 +121,7 @@ public class SalvoController {
     @RequestMapping("/leaderboard")
     public List<Object> createLeaderboard () {
         List<Object> leaderboardDTO = new ArrayList<>();
+
 
         return leaderboardDTO;
     }
