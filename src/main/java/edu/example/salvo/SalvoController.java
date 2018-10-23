@@ -131,7 +131,5 @@ public class SalvoController {
                                                  .collect(Collectors.toList()));
             return singlePlayer;
         }).collect(Collectors.toList());
-
-//        return leaderboardDTO;
     }
 }
