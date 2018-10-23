@@ -19,6 +19,9 @@ public class Player {
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayerSet;
 
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    Set<Score> scoreSet;
+
     Player(){}
 
     Player(String name, String userName){
@@ -41,6 +44,11 @@ public class Player {
     public void addGamePlayer(GamePlayer gamePlayer){
         gamePlayer.setPlayer(this);
         gamePlayerSet.add(gamePlayer);
+    }
+
+    public void addScore(Score score){
+        score.setPlayer(this);
+        scoreSet.add(score);
     }
 
     @JsonIgnore

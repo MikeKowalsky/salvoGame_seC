@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequestMapping("/api")
 @RestController
@@ -121,8 +122,16 @@ public class SalvoController {
     @RequestMapping("/leaderboard")
     public List<Object> createLeaderboard () {
         List<Object> leaderboardDTO = new ArrayList<>();
+        return playerRepo.findAll().stream().map(player -> {
+            Map<String, Object> singlePlayer = new HashMap<>();
+                singlePlayer.put("player_id", player.getId());
+                singlePlayer.put("scores", player.scoreSet
+                                                 .stream()
+                                                 .map(score -> score.getScoreValue())
+                                                 .collect(Collectors.toList()));
+            return singlePlayer;
+        }).collect(Collectors.toList());
 
-
-        return leaderboardDTO;
+//        return leaderboardDTO;
     }
 }
