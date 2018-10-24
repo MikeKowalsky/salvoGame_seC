@@ -1,25 +1,64 @@
 
-const request = async () => {
+// const requestGames = async () => {
+//     try {
+//         const response = await fetch('/api/games')
+//         if(!response.ok){
+//             throw new Error(response.statusText);
+//         }
+//         const data = await response.json()
+//         // printGameList(data)
+//     } catch(err) {
+//         console.log(err)
+//     }
+// }
+
+// const requestLeaderboard = async () => {
+//     try {
+//         const response = await fetch('/api/leaderboard')
+//         if(!response.ok){
+//             throw new Error(response.statusText);
+//         }
+//         const data = await response.json()
+//         // printLeaderboard(data)
+//     } catch(err) {
+//         console.log(err)
+//     }
+// }
+
+// const handleRequests = () => {
+//     Promise.all([requestGames, requestLeaderboard])
+//     .then(values => {
+//         console.log({values})
+//     })
+
+// }
+
+const requests = async (urls) => {
     try {
-        const response = await fetch('/api/games')
-        if(!response.ok){
-            throw new Error(response.statusText);
-        }
-        const data = await response.json()
-        main(data)
+        const data = await Promise.all(
+            urls.map(
+                url => fetch(url).then(
+                            response => response.json()
+                )
+            )
+        )
+        // console.log({data})
+        printLeaderboard(data[0])
+        printGameList(data[1])
     } catch(err) {
         console.log(err)
     }
 }
 
-onload = (() => request() )()
+onload = (() => requests(['/api/leaderboard', '/api/games']) )()
+// onload = (() => handleRequests() )()
 
-const main = (data) => {
-    console.log({data})
+const printGameList = (dataGL) => {
+    console.log({dataGL})
 
     const list = document.querySelector('#list')
 
-    list.innerHTML = data.map(game => {
+    list.innerHTML = dataGL.map(game => {
         const { game_id, created, gamePlayers } = game
 
         const time = new Date(created).toISOString()
@@ -42,6 +81,28 @@ const main = (data) => {
                 </li>
                 `
     }).join('')
+}
+
+const printLeaderboard = (dataLB) => {
+    console.log({dataLB})
+    let template = '';
+    
+    dataLB.forEach(player => {
+        const { player_id, scores } = player
+        if(scores.length > 0){
+            const scoresSum = scores.reduce((acc, cur) => acc + cur)
+            template += 
+                `
+                    <tr>
+                        <td>${ player_id }</td>
+                        <td>${ scores }</td>
+                        <td>${ scoresSum }</td>
+                    </tr>
+                `
+        }
+    })
+    
+    document.querySelector('#lboard').innerHTML = template
 }
 
 const handleClick = (buttonType) => {
