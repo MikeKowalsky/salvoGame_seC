@@ -1,38 +1,4 @@
 
-// const requestGames = async () => {
-//     try {
-//         const response = await fetch('/api/games')
-//         if(!response.ok){
-//             throw new Error(response.statusText);
-//         }
-//         const data = await response.json()
-//         // printGameList(data)
-//     } catch(err) {
-//         console.log(err)
-//     }
-// }
-
-// const requestLeaderboard = async () => {
-//     try {
-//         const response = await fetch('/api/leaderboard')
-//         if(!response.ok){
-//             throw new Error(response.statusText);
-//         }
-//         const data = await response.json()
-//         // printLeaderboard(data)
-//     } catch(err) {
-//         console.log(err)
-//     }
-// }
-
-// const handleRequests = () => {
-//     Promise.all([requestGames, requestLeaderboard])
-//     .then(values => {
-//         console.log({values})
-//     })
-
-// }
-
 const requests = async (urls) => {
     try {
         const data = await Promise.all(
@@ -42,7 +8,6 @@ const requests = async (urls) => {
                 )
             )
         )
-        // console.log({data})
         printLeaderboard(data[0])
         printGameList(data[1])
     } catch(err) {
@@ -51,7 +16,6 @@ const requests = async (urls) => {
 }
 
 onload = (() => requests(['/api/leaderboard', '/api/games']) )()
-// onload = (() => handleRequests() )()
 
 const printGameList = (dataGL) => {
     console.log({dataGL})
@@ -65,7 +29,6 @@ const printGameList = (dataGL) => {
         const catchDate = time.split('T')
         const catchTime = catchDate[1].split('.')
         const catchHour = catchTime[0].split(':')
-        // console.log({catchDate,catchTime, catchHour})
 
         const player01 = (gamePlayers[0]) ? gamePlayers[0].player.name : ' -- '
         const player02 = (gamePlayers[1]) ? gamePlayers[1].player.name : ' -- '            
@@ -83,20 +46,34 @@ const printGameList = (dataGL) => {
     }).join('')
 }
 
+const workWithScoresArray= (scoresArr) => {
+    playersScoreObj = {
+        '0': 0,
+        '0.5': 0,
+        '1': 0
+    }
+
+    scoresArr.forEach(scoreVal => playersScoreObj[scoreVal]++)
+
+    return playersScoreObj
+}
+
 const printLeaderboard = (dataLB) => {
     console.log({dataLB})
     let template = '';
     
     dataLB.forEach(player => {
-        const { player_id, scores } = player
+        const { player_id, player_name, scores } = player
+        const scoresObj = workWithScoresArray(scores)
         if(scores.length > 0){
             const scoresSum = scores.reduce((acc, cur) => acc + cur)
             template += 
                 `
                     <tr>
                         <td>${ player_id }</td>
-                        <td>${ scores }</td>
-                        <td>${ scoresSum }</td>
+                        <td>${ player_name }</td>
+                        <td class="text-center">${ scoresObj['1'] } - ${ scoresObj['0.5'] } - ${ scoresObj['0'] } </td>
+                        <td class="text-center">${ scoresSum }</td>
                     </tr>
                 `
         }
