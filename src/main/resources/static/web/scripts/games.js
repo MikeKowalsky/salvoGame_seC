@@ -1,3 +1,4 @@
+import { handleDate } from './handleTime.js'
 
 const requests = async (urls) => {
     try {
@@ -8,6 +9,7 @@ const requests = async (urls) => {
                 )
             )
         )
+        activateListeners()
         printLeaderboard(data[0])
         printGameList(data[1])
     } catch(err) {
@@ -24,11 +26,7 @@ const printGameList = (dataGL) => {
 
     list.innerHTML = dataGL.map(game => {
         const { game_id, created, gamePlayers } = game
-
-        const time = new Date(created).toISOString()
-        const catchDate = time.split('T')
-        const catchTime = catchDate[1].split('.')
-        const catchHour = catchTime[0].split(':')
+        const { date, hour, minute } = handleDate(created)
 
         const player01 = (gamePlayers[0]) ? gamePlayers[0].player.name : ' -- '
         const player02 = (gamePlayers[1]) ? gamePlayers[1].player.name : ' -- '            
@@ -36,8 +34,7 @@ const printGameList = (dataGL) => {
         return `
                 <li>
                     <p class="my-3 font-weight-bold">
-                        Game: ${ game_id }, created ${catchDate[0]} 
-                        at ${catchHour[0]}:${catchHour[1]}
+                        Game: ${ game_id }, created ${date} at ${hour}:${minute}
                     </p>
                     <p class="ml-3 mb-0">Player 1: ${ player01 }</p>
                     <p class="ml-3 mb-0">Player 2: ${ player02 }</p>
@@ -47,14 +44,12 @@ const printGameList = (dataGL) => {
 }
 
 const workWithScoresArray= (scoresArr) => {
-    playersScoreObj = {
+    const playersScoreObj = {
         '0': 0,
         '0.5': 0,
-        '1': 0
-    }
+        '1': 0}
 
     scoresArr.forEach(scoreVal => playersScoreObj[scoreVal]++)
-
     return playersScoreObj
 }
 
@@ -82,12 +77,17 @@ const printLeaderboard = (dataLB) => {
     document.querySelector('#lboard').innerHTML = template
 }
 
-const handleClick = (buttonType) => {
-    if(buttonType == 'gameList'){
-        document.querySelector('#gameList').style.display = 'block'
-        document.querySelector('#leaderboard').style.display = 'none'
-    } else {
-        document.querySelector('#gameList').style.display = 'none'
-        document.querySelector('#leaderboard').style.display = 'block'
-    }
+const activateListeners = () => {
+    document.querySelector('#runGameList').addEventListener("click", handleRunGameListClick)
+    document.querySelector('#runLeaderboard').addEventListener("click", handleRunLeaderboard)
+}
+
+const handleRunGameListClick = () => {
+    document.querySelector('#gameList').style.display = 'block'
+    document.querySelector('#leaderboard').style.display = 'none'
+}
+
+const handleRunLeaderboard = () => {
+    document.querySelector('#gameList').style.display = 'none'
+    document.querySelector('#leaderboard').style.display = 'block'
 }
