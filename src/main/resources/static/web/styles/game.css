@@ -12,5 +12,13 @@ td > p{
 }
 
 .shipLoc{
+    background-color: green;
+}
+
+.salvoLoc{
+    background-color: yellow;
+}
+
+.hitLoc{
     background-color: red;
 }

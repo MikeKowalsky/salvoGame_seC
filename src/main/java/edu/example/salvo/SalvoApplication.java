@@ -20,7 +20,8 @@ public class SalvoApplication {
 									  GameRepository gameRepo,
 									  GamePlayerRepository gamePlayerRepo,
 									  ShipRepository shipRepo,
-									  SalvoRepository salvoRepo) {
+									  SalvoRepository salvoRepo,
+									  ScoreRepository scoreRepo) {
 		return (args) -> {
 
 			Player p1 = new Player("Jack Bauer", "j.bauer@ctu.gov");
@@ -160,6 +161,23 @@ public class SalvoApplication {
 			salvoRepo.save(slv07);
 			salvoRepo.save(slv08);
 
+			Score sc01 = new Score(p1, g1, 1.0);
+			Score sc02 = new Score(p2, g1, 0.0);
+			Score sc03 = new Score(p1, g2, 0.5);
+			Score sc04 = new Score(p2, g2, 0.5);
+			Score sc05 = new Score(p2, g3, 1.0);
+			Score sc06 = new Score(p4, g3, 0.0);
+			Score sc07 = new Score(p2, g4, 0.5);
+			Score sc08 = new Score(p1, g4, 0.5);
+
+			scoreRepo.save(sc01);
+			scoreRepo.save(sc02);
+			scoreRepo.save(sc03);
+			scoreRepo.save(sc04);
+			scoreRepo.save(sc05);
+			scoreRepo.save(sc06);
+			scoreRepo.save(sc07);
+			scoreRepo.save(sc08);
 		};
 	}
 

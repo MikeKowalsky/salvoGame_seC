@@ -1,5 +1,5 @@
 
-const printPlayersGrid = (data) => {
+const printGrids = (data) => {
     const columnArray = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
     const rowArray = ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -11,31 +11,56 @@ const printPlayersGrid = (data) => {
             dataIn: data
         },
         mounted(){
-                this.addCellsIds()
+                this.addCellsIds('player')
+                this.addCellsIds('opponent')
                 this.markShips()
+                this.markSalvoes()
         },
         methods:{
-            addCellsIds(){
-                const cellsArray = Array.from(document.querySelector('#playersGrid').querySelectorAll('td'))
+            addCellsIds(playerType){
                 const idsArray = []
+                let cellsArray;
+                
+                playerType == 'player'
+                    ? cellsArray = Array.from(document.querySelector('#playersGrid').querySelectorAll('td'))
+                    : cellsArray = Array.from(document.querySelector('#opponentsGrid').querySelectorAll('td'))
 
                 this.columnArr.forEach((letter) => {
-                    this.rowArr.forEach((number) => idsArray.push(`${ letter }${ number }`))
+                    playerType == 'player' 
+                        ? this.rowArr.forEach((number) => idsArray.push(`${ letter }${ number }`))
+                        : this.rowArr.forEach((number) => idsArray.push(`s${ letter }${ number }`))
                 })
 
                 idsArray.forEach((id, index) => cellsArray[index].setAttribute('id', id))
             },
             markShips(){
                 const shipsLocations = []
-                this.dataIn.ships.forEach(ship => ship.location.forEach(loc => shipsLocations.push(loc)))
-                console.log(shipsLocations)
+                this.dataIn.ships.forEach(ship => ship.locations.forEach(loc => shipsLocations.push(loc)))
                 shipsLocations.forEach(loc => {
                     document.querySelector(`#${ loc }`).classList.add('shipLoc')
+                })
+            },
+            markSalvoes(){
+                this.dataIn.salvoes.forEach(salvoSet => {
+                    if(salvoSet.player_id == this.dataIn.player.player_id){
+                        salvoSet.locations.forEach(loc => {
+                            const td = document.querySelector(`#s${ loc }`)
+                            td.classList.add('salvoLoc')
+                            td.innerHTML = salvoSet.turn
+                        })
+                    } else {
+                        salvoSet.locations.forEach(loc => {
+                            const td = document.querySelector(`#${ loc }`)
+                            td.innerHTML = salvoSet.turn
+                            td.classList.contains('shipLoc')
+                                ? td.classList.add('hitLoc')
+                                : td.classList.add('salvoLoc')
+                        })
+                    }
                 })
             }
         }
     })
-
 }
 
 const basicInfo = (data) => {
@@ -54,17 +79,15 @@ const basicInfo = (data) => {
             }
         }        
     })
-
-
 }
 
 const request = async (url) => {
     // const response = await fetch('/api/game_view/13')
     const response = await fetch(url)
-    const json = await response.json()
-    console.log({json})
-    basicInfo(json)
-    printPlayersGrid(json)
+    const data = await response.json()
+    console.log({data})
+    basicInfo(data)
+    printGrids(data)
 }
 
 const getApiURL = () => {

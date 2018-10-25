@@ -4,14 +4,35 @@
     <meta charset="UTF-8">
     <title>Salvo!</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles/games.css">
 </head>
 <body>
 
     <div class="container">
 
         <h1 class="my-4 text-warning">Salvo game!</h1>
+        
+        <div class="d-flex">
+            <button type="button" class="btn btn-info mr-4" onClick="handleClick('gameList')">Game List</button>
+            <button type="button" class="btn btn-info" onClick="handleClick('leaderboard')">Leaderboard</button>
+        </div>
 
-        <ol id="list"></ol>
+        <div id="gameList" class="my-4">
+            <ol id="list"></ol>
+        </div>
+        <div id="leaderboard" class="my-4 my-leaderboard">
+            <table class="table">
+                <thead>
+                    <tr class="table-info">
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th class="text-center">Results</th>
+                        <th class="text-center">Total scores</th>
+                    </tr>
+                </thead>
+                <tbody id="lboard"></tbody>
+            </table>
+        </div>
     
     </div>
    

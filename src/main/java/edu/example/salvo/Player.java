@@ -1,6 +1,7 @@
 package edu.example.salvo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,13 +12,17 @@ import java.util.stream.Collectors;
 public class Player {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private long id;
     private String name;
     private String userName;
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayerSet;
+
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    Set<Score> scoreSet;
 
     Player(){}
 
@@ -41,6 +46,11 @@ public class Player {
     public void addGamePlayer(GamePlayer gamePlayer){
         gamePlayer.setPlayer(this);
         gamePlayerSet.add(gamePlayer);
+    }
+
+    public void addScore(Score score){
+        score.setPlayer(this);
+        scoreSet.add(score);
     }
 
     @JsonIgnore

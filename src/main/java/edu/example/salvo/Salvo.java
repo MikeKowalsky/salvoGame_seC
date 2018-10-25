@@ -1,5 +1,7 @@
 package edu.example.salvo;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +10,8 @@ import java.util.List;
 public class Salvo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private long id;
     private long turnNo;
 
@@ -40,6 +43,10 @@ public class Salvo {
 
     public long getTurnNo() {
         return turnNo;
+    }
+
+    public Player getPlayer(){
+        return this.gamePlayer.getPlayer();
     }
 
     public List<String> getLocations() {

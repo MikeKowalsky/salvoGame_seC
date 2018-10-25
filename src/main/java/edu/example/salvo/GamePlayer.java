@@ -1,5 +1,7 @@
 package edu.example.salvo;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
@@ -9,7 +11,8 @@ import java.util.Set;
 public class GamePlayer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
