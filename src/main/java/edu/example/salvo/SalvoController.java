@@ -125,6 +125,7 @@ public class SalvoController {
         return playerRepo.findAll().stream().map(player -> {
             Map<String, Object> singlePlayer = new HashMap<>();
                 singlePlayer.put("player_id", player.getId());
+                singlePlayer.put("player_name", player.getName());
                 singlePlayer.put("scores", player.scoreSet
                                                  .stream()
                                                  .map(score -> score.getScoreValue())
