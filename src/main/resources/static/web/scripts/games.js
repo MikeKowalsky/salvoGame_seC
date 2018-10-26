@@ -33,7 +33,7 @@ const printGameList = (dataGL) => {
         
         return `
                 <li>
-                    <p class="my-3 font-weight-bold">
+                    <p class="my-3 font-weight-bold my-text">
                         Game: ${ game_id }, created ${date} at ${hour}:${minute}
                     </p>
                     <p class="ml-3 mb-0">Player 1: ${ player01 }</p>
