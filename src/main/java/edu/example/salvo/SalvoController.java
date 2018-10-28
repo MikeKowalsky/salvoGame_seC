@@ -1,6 +1,7 @@
 package edu.example.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,9 @@ public class SalvoController {
 
     @Autowired
     private GamePlayerRepository gamePlayerRepo;
+
+//    @Autowired
+//    PasswordEncoder passwordEncoder;
 
     @RequestMapping("/games")
     public List<Object> createGameDO (){
@@ -53,6 +57,8 @@ public class SalvoController {
             singlePlayer.put("player_id", gp.getPlayer().getId());
             singlePlayer.put("email", gp.getPlayer().getUserName());
             singlePlayer.put("name", gp.getPlayer().getName());
+//            singlePlayer.put("test", playerRepo.findByUserName( gp.getPlayer().getUserName()).getUserName());
+//            singlePlayer.put("test1", playerRepo.findByUserName( gp.getPlayer().getUserName()).getPassword());
         return singlePlayer;
     }
 

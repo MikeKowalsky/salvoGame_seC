@@ -78,8 +78,9 @@ const printLeaderboard = (dataLB) => {
 }
 
 const activateListeners = () => {
-    document.querySelector('#runGameList').addEventListener("click", handleRunGameListClick)
-    document.querySelector('#runLeaderboard').addEventListener("click", handleRunLeaderboard)
+    document.querySelector('#runGameList').addEventListener('click', handleRunGameListClick)
+    document.querySelector('#runLeaderboard').addEventListener('click', handleRunLeaderboard)
+    document.querySelector('#login').addEventListener('click', login)
 }
 
 const handleRunGameListClick = () => {
@@ -90,4 +91,45 @@ const handleRunGameListClick = () => {
 const handleRunLeaderboard = () => {
     document.querySelector('#gameList').style.display = 'none'
     document.querySelector('#leaderboard').style.display = 'block'
+}
+
+function login(){
+    $.post("/api/login",
+        { name: "j.bauer@ctu.gov",
+        pwd: "24"})
+    .done(function() {
+        console.log("logged in!");
+    })
+    .fail(function(resp){
+        console.log(resp);
+        alert(`Something went wrong! Error code: ${ resp.status }, text: ${ resp.responseJSON.error }`);
+    });
+
+    // console.log('in login')
+
+    // fetch('/api/login', {
+    //     method: 'POST',
+    //     headers: {
+    //         "Content-Type": "application/json; charset=utf-8",
+    //     },
+    //     body: {
+    //         // userName: "fokinSpring", 
+    //         name: "j.bauer@ctu.gov",
+    //         pwd: "24",
+    //     }
+    // })
+    // .then(res => {
+    //     console.log(res)
+    //     return res.json()
+    // })
+    // // .then(response => console.log('Success:', JSON.stringify(response)))
+    // .then(response => console.log(response))
+    // .catch(error => console.log('Error:', error))
+
+    // const response = await fetch('/api/login', {
+    //     method: 'post',
+    //     body: JSON.stringify(player)
+    // })
+    // const data = await response.json()
+    // console.log({data})
 }
