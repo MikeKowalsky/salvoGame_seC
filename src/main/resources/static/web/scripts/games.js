@@ -12,6 +12,7 @@ const requests = async (urls) => {
         activateListeners()
         printLeaderboard(data[0])
         printGameList(data[1])
+        console.log(data[1])
     } catch(err) {
         console.log(err)
     }
@@ -19,12 +20,11 @@ const requests = async (urls) => {
 
 onload = (() => requests(['/api/leaderboard', '/api/games']) )()
 
-const printGameList = (dataGL) => {
-    console.log({dataGL})
+const printGameList = ({gameList}) => {
 
     const list = document.querySelector('#list')
 
-    list.innerHTML = dataGL.map(game => {
+    list.innerHTML = gameList.map(game => {
         const { game_id, created, gamePlayers } = game
         const { date, hour, minute } = handleDate(created)
 
@@ -81,6 +81,7 @@ const activateListeners = () => {
     document.querySelector('#runGameList').addEventListener('click', handleRunGameListClick)
     document.querySelector('#runLeaderboard').addEventListener('click', handleRunLeaderboard)
     document.querySelector('#login').addEventListener('click', login)
+    document.querySelector('#logout').addEventListener('click', logout)
 }
 
 const handleRunGameListClick = () => {
@@ -95,9 +96,9 @@ const handleRunLeaderboard = () => {
 
 function login(){
     $.post("/api/login",
-        { name: "j.bauer@ctu.gov",
-        pwd: "24"})
-    .done(function() {
+        { userName: "j.bauer@ctu.gov",
+        password: "24"})
+    .done(() => {
         console.log("logged in!");
     })
     .fail(function(resp){
@@ -109,21 +110,22 @@ function login(){
 
     // fetch('/api/login', {
     //     method: 'POST',
-    //     headers: {
-    //         "Content-Type": "application/json; charset=utf-8",
-    //     },
+    //     // headers: {
+    //     //     "Content-Type": "application/json; charset=utf-8",
+    //     // },
     //     body: {
     //         // userName: "fokinSpring", 
     //         name: "j.bauer@ctu.gov",
     //         pwd: "24",
     //     }
     // })
-    // .then(res => {
-    //     console.log(res)
-    //     return res.json()
-    // })
+    // // .then(res => {
+    // //     console.log(res)
+    // //     return res.json()
+    // // })
     // // .then(response => console.log('Success:', JSON.stringify(response)))
-    // .then(response => console.log(response))
+    // // .then(response => console.log(response))
+    // .then(() => console.log('logged in'))
     // .catch(error => console.log('Error:', error))
 
     // const response = await fetch('/api/login', {
@@ -132,4 +134,14 @@ function login(){
     // })
     // const data = await response.json()
     // console.log({data})
+}
+
+const logout = () => {
+    // $.post("/api/logout").done(function() { console.log("logged out"); })
+
+    fetch('api/logout',{
+        method: 'POST'
+    })
+    .then(() => console.log('logged out'))
+
 }

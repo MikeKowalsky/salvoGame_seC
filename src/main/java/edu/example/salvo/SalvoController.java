@@ -2,6 +2,8 @@ package edu.example.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,18 +28,28 @@ public class SalvoController {
 //    PasswordEncoder passwordEncoder;
 
     @RequestMapping("/games")
-    public List<Object> createGameDO (){
-        List<Object> gameDataObject = new ArrayList<>();
+//    public List<Object> createGameDO (Authentication authentication){
+    public Map<String, Object> createGameDO (Authentication authentication){
+        Map<String, Object> gameDO = new HashMap<>();
+
+        if (isGuest(authentication)){
+            gameDO.put("loggedin", null);
+        } else {
+            gameDO.put("loggedIn", authentication.getName());
+        }
+
+        List<Object> gameList = new ArrayList<>();
         gameRepo.findAll()
-                .stream()
-                .forEach(game -> {
-                    Map<String, Object> singleGame = new HashMap<>();
-                        singleGame.put("game_id", game.getId());
-                        singleGame.put("created", game.getCreationDate().getTime());
-                        singleGame.put("gamePlayers", createGamePlayerDO(game));
-                    gameDataObject.add(singleGame);
+            .stream()
+            .forEach(game -> {
+                Map<String, Object> singleGame = new HashMap<>();
+                    singleGame.put("game_id", game.getId());
+                    singleGame.put("created", game.getCreationDate().getTime());
+                    singleGame.put("gamePlayers", createGamePlayerDO(game));
+                gameList.add(singleGame);
         });
-        return gameDataObject;
+        gameDO.put("gameList", gameList);
+        return gameDO;
     }
 
     private List<Object> createGamePlayerDO(Game game){
@@ -60,6 +72,10 @@ public class SalvoController {
 //            singlePlayer.put("test", playerRepo.findByUserName( gp.getPlayer().getUserName()).getUserName());
 //            singlePlayer.put("test1", playerRepo.findByUserName( gp.getPlayer().getUserName()).getPassword());
         return singlePlayer;
+    }
+
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
 
     @RequestMapping("/game_view/{gpId}")

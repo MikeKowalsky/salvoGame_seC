@@ -213,9 +213,6 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 	@Autowired
 	PlayerRepository playerRepo;
 
-//	@Autowired
-//	PasswordEncoder passwordEncoder;
-
 	@Override
 	public void init(AuthenticationManagerBuilder auth) throws Exception{
 
@@ -229,8 +226,11 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 			System.out.println("Player: " + player);
 
 			if (player != null) {
-				return new User(player.getUserName(), player.getPassword(),
-						AuthorityUtils.createAuthorityList("USER"));
+				return User.withDefaultPasswordEncoder()
+					.username(player.getUserName())
+					.password(player.getPassword())
+					.roles("USER")
+					.build();
 			} else {
 				System.out.println("Unknown user: " + inputName);
 				throw new UsernameNotFoundException("Unknown user: " + inputName);
@@ -246,22 +246,22 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/**").permitAll()
-//			.antMatchers("/web/games.html").permitAll()
-//			.antMatchers("/web/styles/games.css").permitAll()
-//			.antMatchers("/web/scripts/games.js").permitAll()
-//			.antMatchers("/web/scripts/handleTime.js").permitAll()
-//			.antMatchers("/api/games").permitAll()
-//			.antMatchers("/api/leaderboard").permitAll()
-//			.antMatchers("/**").hasAuthority("USER");
-			.and()
-				.formLogin()
-					.usernameParameter("name")
-					.passwordParameter("pwd")
-					.loginPage("/api/login")
-			.and()
-				.logout()
-					.logoutUrl("/api/logout");
+//			.antMatchers("/**").permitAll();
+			.antMatchers("/web/games.html").permitAll()
+			.antMatchers("/web/styles/games.css").permitAll()
+			.antMatchers("/web/scripts/games.js").permitAll()
+			.antMatchers("/web/scripts/handleTime.js").permitAll()
+			.antMatchers("/api/games").permitAll()
+			.antMatchers("/api/leaderboard").permitAll()
+			.antMatchers("/**").hasAuthority("USER");
+
+		http.formLogin()
+			.usernameParameter("userName")
+			.passwordParameter("password")
+			.loginPage("/api/login");
+
+		http.logout()
+			.logoutUrl("/api/logout");
 
 
 		// turn off checking for CSRF tokens
