@@ -87,6 +87,8 @@ const activateListeners = () => {
     document.querySelector('#runLeaderboard').addEventListener('click', handleRunLeaderboard)
     document.querySelector('#login').addEventListener('click', login)
     document.querySelector('#logout').addEventListener('click', logout)
+    document.querySelector('#createAccount').addEventListener('click', handleShowSignInForm)
+    document.querySelector('#signIn').addEventListener('click', signIn)
 }
 
 const handleRunGameListClick = () => {
@@ -99,13 +101,37 @@ const handleRunLeaderboard = () => {
     document.querySelector('#leaderboard').style.display = 'block'
 }
 
+const handleShowSignInForm = () => {
+    showHide('signInFormPart', 'loginFormPart')
+}
+
 const showHide = (showID, hideID) => {
     document.querySelector(`#${ showID }`).style.display = 'block'
     document.querySelector(`#${ hideID }`).style.display = 'none'
 }
 
+function signIn(){
+    const form = document.querySelector('#formSignIn')
+
+    fetch("/api/players", {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `name=${ form[0].value }&userName=${ form[1].value }&password=${ form[2].value }`,
+    })
+    .then(response => console.log(response))
+    .then(() => {
+        console.log('signed in')
+        location.reload()
+    })
+    .catch(error => console.log('Error:', error))
+}
+
 function login(){
-    const form = document.querySelector('#form')
+    const form = document.querySelector('#formLogin')
     
     fetch("/api/login", {
         credentials: 'include',

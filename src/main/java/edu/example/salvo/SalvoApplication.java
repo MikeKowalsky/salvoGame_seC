@@ -248,6 +248,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/web/scripts/handleTime.js").permitAll()
 			.antMatchers("/api/games").permitAll()
 			.antMatchers("/api/leaderboard").permitAll()
+			.antMatchers("/api/players").permitAll()
 			.antMatchers("/favicon.ico").permitAll()
 			.antMatchers("/**").hasAuthority("USER");
 
