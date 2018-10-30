@@ -5,3 +5,7 @@
 .my-input{
     height: 31px;
 }
+
+.my-link{
+    cursor: pointer;
+}

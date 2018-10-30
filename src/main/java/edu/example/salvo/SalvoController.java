@@ -1,10 +1,13 @@
 package edu.example.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
@@ -23,6 +26,7 @@ public class SalvoController {
     @Autowired
     private GamePlayerRepository gamePlayerRepo;
 
+    // creating data for game list
     @RequestMapping("/games")
     public Map<String, Object> createGameDO (Authentication authentication){
         Map<String, Object> gameDO = new HashMap<>();
@@ -73,6 +77,20 @@ public class SalvoController {
             : null;
     }
 
+    private GamePlayer getOpponentGP(GamePlayer currentGP){
+        if(currentGP.getGame().gamePlayerSet.size() == 1){
+            return null;
+        }
+        GamePlayer[] result = { null }; //to avoid this shit with final in lambda function
+        currentGP.getGame().gamePlayerSet.stream().forEach(gp -> {
+            if(gp.getId() != currentGP.getId()){
+                result[0] = gp;
+            }
+        });
+        return result[0];
+    }
+
+    // adding info to gameView JSON
     @RequestMapping("/game_view/{gpId}")
     public Map<String, Object> createGameView(@PathVariable long gpId) {
         GamePlayer currentGP = gamePlayerRepo.findById(gpId);
@@ -93,19 +111,7 @@ public class SalvoController {
         return singleGameView;
     }
 
-    private GamePlayer getOpponentGP(GamePlayer currentGP){
-        if(currentGP.getGame().gamePlayerSet.size() == 1){
-            return null;
-        }
-        GamePlayer[] result = { null }; //to avoid this shit with final in lambda function
-        currentGP.getGame().gamePlayerSet.stream().forEach(gp -> {
-            if(gp.getId() != currentGP.getId()){
-                result[0] = gp;
-            }
-        });
-        return result[0];
-    }
-
+    // adding info to gameView JSON
     private Map<String, Object> createGPDOforGameView(GamePlayer gp){
         return new HashMap<String, Object>(){{
             put("gp_id", gp.getId());
@@ -115,6 +121,7 @@ public class SalvoController {
         }};
     }
 
+    // adding info to gameView JSON
     private List<Object> createShipList(GamePlayer gp){
         List<Object> shipList = new ArrayList<>();
         gp.shipSet.stream().forEach(ship -> shipList.add(new HashMap<String, Object>(){{
@@ -124,6 +131,7 @@ public class SalvoController {
         return shipList;
     }
 
+    // adding info to gameView JSON
     private List<Object> createSalvoList(GamePlayer currentGp, GamePlayer opponentGP){
         List<Object> salvoList = new ArrayList<>();
         currentGp.salvoSet.stream()
@@ -135,6 +143,7 @@ public class SalvoController {
         return salvoList;
     }
 
+    // adding info to gameView JSON
     private Map<String, Object> createSingleSalvoMap(Salvo salvo){
         return new HashMap<String, Object>(){{
             put("player_id", salvo.getPlayer().getId());
@@ -143,6 +152,7 @@ public class SalvoController {
         }};
     }
 
+    // create leaderboard data
     @RequestMapping("/leaderboard")
     public List<Object> createLeaderboard () {
         return playerRepo.findAll().stream()
@@ -154,5 +164,29 @@ public class SalvoController {
                     .map(score -> score.getScoreValue())
                     .collect(Collectors.toList()));
         }}).collect(Collectors.toList());
+    }
+
+    // creating Map objects for responses
+    private Map<String, Object> createMap(String key, Object value) {
+        return new HashMap<String, Object>(){{
+            put(key, value);
+        }};
+    }
+
+    // create new player
+    @RequestMapping(path = "/players", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> createPlayer(String name, String userName, String password) {
+
+        if(name.isEmpty() || userName.isEmpty() || password.isEmpty()){
+            return new ResponseEntity<>(createMap("error", "Invalid name, username or password"), HttpStatus.FORBIDDEN);
+        }
+
+        Player player = playerRepo.findByUserName(userName);
+        if(player != null) {
+            return new ResponseEntity<>(createMap("error", "Username already exists"), HttpStatus.FORBIDDEN);
+        }
+
+        Player newPlayer = playerRepo.save(new Player(name, userName, password));
+        return new ResponseEntity<>(createMap("Username", newPlayer.getUserName()), HttpStatus.CREATED);
     }
 }
