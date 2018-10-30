@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-//import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -12,12 +11,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-//import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
@@ -221,9 +216,9 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 //				.withUser("j.bauer@ctu.gov").password("{noop}24").roles("USER");
 
 		auth.userDetailsService(inputName-> {
-			System.out.println("Passed userName: " + inputName);
+//			System.out.println("Passed userName: " + inputName);
 			Player player = playerRepo.findByUserName(inputName);
-			System.out.println("Player: " + player);
+//			System.out.println("Player: " + player);
 
 			if (player != null) {
 				return User.withDefaultPasswordEncoder()
@@ -253,6 +248,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/web/scripts/handleTime.js").permitAll()
 			.antMatchers("/api/games").permitAll()
 			.antMatchers("/api/leaderboard").permitAll()
+			.antMatchers("/favicon.ico").permitAll()
 			.antMatchers("/**").hasAuthority("USER");
 
 		http.formLogin()

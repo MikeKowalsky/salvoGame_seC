@@ -1,7 +1,6 @@
 package edu.example.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,18 +23,18 @@ public class SalvoController {
     @Autowired
     private GamePlayerRepository gamePlayerRepo;
 
-//    @Autowired
-//    PasswordEncoder passwordEncoder;
-
     @RequestMapping("/games")
-//    public List<Object> createGameDO (Authentication authentication){
     public Map<String, Object> createGameDO (Authentication authentication){
         Map<String, Object> gameDO = new HashMap<>();
-
         if (isGuest(authentication)){
             gameDO.put("loggedin", null);
         } else {
-            gameDO.put("loggedIn", authentication.getName());
+            Player loggedInPlayer = playerRepo.findByUserName(authentication.getName());
+            gameDO.put("loggedIn", new HashMap<String, Object>(){{
+                put("name", loggedInPlayer.getName());
+                put("userName", loggedInPlayer.getUserName());
+                put("playerId", loggedInPlayer.getId());
+            }});
         }
 
         List<Object> gameList = new ArrayList<>();
@@ -69,8 +68,6 @@ public class SalvoController {
             singlePlayer.put("player_id", gp.getPlayer().getId());
             singlePlayer.put("email", gp.getPlayer().getUserName());
             singlePlayer.put("name", gp.getPlayer().getName());
-//            singlePlayer.put("test", playerRepo.findByUserName( gp.getPlayer().getUserName()).getUserName());
-//            singlePlayer.put("test1", playerRepo.findByUserName( gp.getPlayer().getUserName()).getPassword());
         return singlePlayer;
     }
 

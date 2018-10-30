@@ -13,6 +13,12 @@ const requests = async (urls) => {
         printLeaderboard(data[0])
         printGameList(data[1])
         console.log(data[1])
+
+        if(data[1].loggedIn != null){
+            document.querySelector('#loginInfo').innerHTML = `Welcome ${ data[1].loggedIn.name }!`
+            showHide('logged', 'noLogged')
+        }
+
     } catch(err) {
         console.log(err)
     }
@@ -21,7 +27,6 @@ const requests = async (urls) => {
 onload = (() => requests(['/api/leaderboard', '/api/games']) )()
 
 const printGameList = ({gameList}) => {
-
     const list = document.querySelector('#list')
 
     list.innerHTML = gameList.map(game => {
@@ -73,7 +78,7 @@ const printLeaderboard = (dataLB) => {
                 `
         }
     })
-    
+
     document.querySelector('#lboard').innerHTML = template
 }
 
@@ -94,39 +99,29 @@ const handleRunLeaderboard = () => {
     document.querySelector('#leaderboard').style.display = 'block'
 }
 
+const showHide = (showID, hideID) => {
+    document.querySelector(`#${ showID }`).style.display = 'block'
+    document.querySelector(`#${ hideID }`).style.display = 'none'
+}
+
 function login(){
-    $.post("/api/login",
-        { userName: "j.bauer@ctu.gov",
-        password: "24"})
-    .done(() => {
-        console.log("logged in!");
+    const form = document.querySelector('#form')
+    
+    fetch("/api/login", {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `userName=${ form[0].value }&password=${ form[1].value }`,
     })
-    .fail(function(resp){
-        console.log(resp);
-        alert(`Something went wrong! Error code: ${ resp.status }, text: ${ resp.responseJSON.error }`);
-    });
-
-    // console.log('in login')
-
-    // fetch('/api/login', {
-    //     method: 'POST',
-    //     // headers: {
-    //     //     "Content-Type": "application/json; charset=utf-8",
-    //     // },
-    //     body: {
-    //         // userName: "fokinSpring", 
-    //         name: "j.bauer@ctu.gov",
-    //         pwd: "24",
-    //     }
-    // })
-    // // .then(res => {
-    // //     console.log(res)
-    // //     return res.json()
-    // // })
-    // // .then(response => console.log('Success:', JSON.stringify(response)))
-    // // .then(response => console.log(response))
-    // .then(() => console.log('logged in'))
-    // .catch(error => console.log('Error:', error))
+    .then(response => console.log(response))
+    .then(() => {
+        console.log('logged in')
+        location.reload()
+    })
+    .catch(error => console.log('Error:', error))
 
     // const response = await fetch('/api/login', {
     //     method: 'post',
@@ -137,11 +132,18 @@ function login(){
 }
 
 const logout = () => {
-    // $.post("/api/logout").done(function() { console.log("logged out"); })
-
-    fetch('api/logout',{
-        method: 'POST'
+    fetch("/api/logout",{
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: '',
     })
-    .then(() => console.log('logged out'))
-
+    .then(() => {
+        console.log('logged out')
+        location.reload()
+    })
+    .catch(error => console.log('Error:', error))
 }
