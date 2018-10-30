@@ -1,6 +1,8 @@
 package edu.example.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,18 +24,31 @@ public class SalvoController {
     private GamePlayerRepository gamePlayerRepo;
 
     @RequestMapping("/games")
-    public List<Object> createGameDO (){
-        List<Object> gameDataObject = new ArrayList<>();
+    public Map<String, Object> createGameDO (Authentication authentication){
+        Map<String, Object> gameDO = new HashMap<>();
+        if (isGuest(authentication)){
+            gameDO.put("loggedin", null);
+        } else {
+            Player loggedInPlayer = playerRepo.findByUserName(authentication.getName());
+            gameDO.put("loggedIn", new HashMap<String, Object>(){{
+                put("name", loggedInPlayer.getName());
+                put("userName", loggedInPlayer.getUserName());
+                put("playerId", loggedInPlayer.getId());
+            }});
+        }
+
+        List<Object> gameList = new ArrayList<>();
         gameRepo.findAll()
-                .stream()
-                .forEach(game -> {
-                    Map<String, Object> singleGame = new HashMap<>();
-                        singleGame.put("game_id", game.getId());
-                        singleGame.put("created", game.getCreationDate().getTime());
-                        singleGame.put("gamePlayers", createGamePlayerDO(game));
-                    gameDataObject.add(singleGame);
+            .stream()
+            .forEach(game -> {
+                Map<String, Object> singleGame = new HashMap<>();
+                    singleGame.put("game_id", game.getId());
+                    singleGame.put("created", game.getCreationDate().getTime());
+                    singleGame.put("gamePlayers", createGamePlayerDO(game));
+                gameList.add(singleGame);
         });
-        return gameDataObject;
+        gameDO.put("gameList", gameList);
+        return gameDO;
     }
 
     private List<Object> createGamePlayerDO(Game game){
@@ -56,6 +71,10 @@ public class SalvoController {
         return singlePlayer;
     }
 
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+    }
+
     @RequestMapping("/game_view/{gpId}")
     public Map<String, Object> createGameView(@PathVariable long gpId) {
         GamePlayer currentGP = gamePlayerRepo.findById(gpId);
@@ -66,13 +85,20 @@ public class SalvoController {
             singleGameView.put("game_id", currentGP.getGame().getId());
             singleGameView.put("created", currentGP.getCreationDate());
             singleGameView.put("player", createGPDOforGameView(currentGP));
-            singleGameView.put("opponent", createGPDOforGameView(opponentGP));
+            if(opponentGP != null){
+                singleGameView.put("opponent", createGPDOforGameView(opponentGP));
+            } else {
+                singleGameView.put("opponent", null);
+            }
             singleGameView.put("ships", createShipList(currentGP));
             singleGameView.put("salvoes", createSalvoList(currentGP, opponentGP));
         return singleGameView;
     }
 
     private GamePlayer getOpponentGP(GamePlayer currentGP){
+        if(currentGP.getGame().gamePlayerSet.size() == 1){
+            return null;
+        }
         GamePlayer[] result = { null }; //to avoid this shit with final in lambda function
         currentGP.getGame().gamePlayerSet.stream().forEach(gp -> {
             if(gp.getId() != currentGP.getId()){
@@ -106,8 +132,10 @@ public class SalvoController {
         List<Object> salvoList = new ArrayList<>();
         currentGp.salvoSet.stream()
                           .forEach(salvo -> salvoList.add(createSingleSalvoMap(salvo)));
-        opponentGP.salvoSet.stream()
-                           .forEach(salvo -> salvoList.add(createSingleSalvoMap(salvo)));
+        if(opponentGP != null){
+            opponentGP.salvoSet.stream()
+                    .forEach(salvo -> salvoList.add(createSingleSalvoMap(salvo)));
+        }
         return salvoList;
     }
 
@@ -121,7 +149,6 @@ public class SalvoController {
 
     @RequestMapping("/leaderboard")
     public List<Object> createLeaderboard () {
-        List<Object> leaderboardDTO = new ArrayList<>();
         return playerRepo.findAll().stream().map(player -> {
             Map<String, Object> singlePlayer = new HashMap<>();
                 singlePlayer.put("player_id", player.getId());

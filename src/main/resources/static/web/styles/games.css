@@ -1,3 +1,7 @@
-.my-leaderboard{
+.my-hide{
     display: none;
+}
+
+.my-input{
+    height: 31px;
 }

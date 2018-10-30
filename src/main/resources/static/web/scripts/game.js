@@ -10,11 +10,20 @@ const printGrids = (data) => {
             rowArr: rowArray,
             dataIn: data
         },
+        computed:{
+            opponentName(){
+                return this.dataIn.opponent !== null
+                    ? this.dataIn.opponent.name
+                    : null
+            }
+        },
         mounted(){
                 this.addCellsIds('player')
-                this.addCellsIds('opponent')
                 this.markShips()
-                this.markSalvoes()
+                if(this.opponentName !== null){
+                    this.addCellsIds('opponent')
+                    this.markSalvoes()
+                }
         },
         methods:{
             addCellsIds(playerType){
@@ -51,10 +60,10 @@ const printGrids = (data) => {
                     } else {
                         salvoSet.locations.forEach(loc => {
                             const td = document.querySelector(`#${ loc }`)
-                            td.innerHTML = salvoSet.turn
                             td.classList.contains('shipLoc')
                                 ? td.classList.add('hitLoc')
                                 : td.classList.add('salvoLoc')
+                            td.innerHTML = salvoSet.turn
                         })
                     }
                 })
@@ -76,6 +85,14 @@ const basicInfo = (data) => {
                 const catchHour = catchTime[0].split(':')
                 // console.log({catchDate,catchTime, catchHour})
                 return `${catchDate[0]} at ${catchHour[0]}:${catchHour[1]}`
+            },
+            playerName(){
+                return this.dataIn.player.name
+            },
+            opponentName(){
+                return this.dataIn.opponent !== null
+                    ? this.dataIn.opponent.name
+                    : null
             }
         }        
     })

@@ -13,13 +13,17 @@
         <h1 class="my-4 text-warning">Salvo game</h1>
 
         <div id="vueInfo"> 
-            <p class="h4">Welcome back {{ dataIn.player.name }}!</p>
+            <p class="h4">Welcome back {{ playerName }}!</p>
             <p class="m-2">Game no. {{ dataIn.game_id }}, created {{ creationDate }}.</p>
-            <p class="m-2">Players: {{ dataIn.player.name }} vs. {{ dataIn.opponent.name }}</p>
+            <p class="m-2">
+                <span>Players: {{ playerName }} vs. </span>
+                <span v-if="opponentName != null">{{ opponentName }}</span>
+                <span v-else>     ( ... waiting for second player)</span>
+            </p>
         </div>
 
         <div id="vueGrid" class="mt-4 row">
-            <div class="col-sm-12 col-md-6">
+            <div class="col-sm-12 col-md-6 my-4">
                 <p class="h5">Your battlefield</p>
                 <div>
                     <table id="playersGrid">
@@ -34,8 +38,8 @@
                     </table>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-6">
-                <p class="h5">{{ dataIn.opponent.name }} battlefield</p>
+            <div v-if="opponentName != null" class="col-sm-12 col-md-6  my-4">
+                <p class="h5">{{ opponentName }} battlefield</p>
                 <div>
                     <table id="opponentsGrid">
                         <tr v-for="(letter, index) in columnArr" :key="index">
