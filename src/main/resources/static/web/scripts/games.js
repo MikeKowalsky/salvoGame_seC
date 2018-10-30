@@ -12,6 +12,13 @@ const requests = async (urls) => {
         activateListeners()
         printLeaderboard(data[0])
         printGameList(data[1])
+        console.log(data[1])
+
+        if(data[1].loggedIn != null){
+            document.querySelector('#loginInfo').innerHTML = `Welcome ${ data[1].loggedIn.name }!`
+            showHide('logged', 'noLogged')
+        }
+
     } catch(err) {
         console.log(err)
     }
@@ -19,12 +26,10 @@ const requests = async (urls) => {
 
 onload = (() => requests(['/api/leaderboard', '/api/games']) )()
 
-const printGameList = (dataGL) => {
-    console.log({dataGL})
-
+const printGameList = ({gameList}) => {
     const list = document.querySelector('#list')
 
-    list.innerHTML = dataGL.map(game => {
+    list.innerHTML = gameList.map(game => {
         const { game_id, created, gamePlayers } = game
         const { date, hour, minute } = handleDate(created)
 
@@ -73,13 +78,15 @@ const printLeaderboard = (dataLB) => {
                 `
         }
     })
-    
+
     document.querySelector('#lboard').innerHTML = template
 }
 
 const activateListeners = () => {
-    document.querySelector('#runGameList').addEventListener("click", handleRunGameListClick)
-    document.querySelector('#runLeaderboard').addEventListener("click", handleRunLeaderboard)
+    document.querySelector('#runGameList').addEventListener('click', handleRunGameListClick)
+    document.querySelector('#runLeaderboard').addEventListener('click', handleRunLeaderboard)
+    document.querySelector('#login').addEventListener('click', login)
+    document.querySelector('#logout').addEventListener('click', logout)
 }
 
 const handleRunGameListClick = () => {
@@ -90,4 +97,53 @@ const handleRunGameListClick = () => {
 const handleRunLeaderboard = () => {
     document.querySelector('#gameList').style.display = 'none'
     document.querySelector('#leaderboard').style.display = 'block'
+}
+
+const showHide = (showID, hideID) => {
+    document.querySelector(`#${ showID }`).style.display = 'block'
+    document.querySelector(`#${ hideID }`).style.display = 'none'
+}
+
+function login(){
+    const form = document.querySelector('#form')
+    
+    fetch("/api/login", {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `userName=${ form[0].value }&password=${ form[1].value }`,
+    })
+    .then(response => console.log(response))
+    .then(() => {
+        console.log('logged in')
+        location.reload()
+    })
+    .catch(error => console.log('Error:', error))
+
+    // const response = await fetch('/api/login', {
+    //     method: 'post',
+    //     body: JSON.stringify(player)
+    // })
+    // const data = await response.json()
+    // console.log({data})
+}
+
+const logout = () => {
+    fetch("/api/logout",{
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: '',
+    })
+    .then(() => {
+        console.log('logged out')
+        location.reload()
+    })
+    .catch(error => console.log('Error:', error))
 }
