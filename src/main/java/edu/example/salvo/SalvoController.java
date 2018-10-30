@@ -29,24 +29,18 @@ public class SalvoController {
         if (isGuest(authentication)){
             gameDO.put("loggedin", null);
         } else {
-            Player loggedInPlayer = playerRepo.findByUserName(authentication.getName());
-            gameDO.put("loggedIn", new HashMap<String, Object>(){{
-                put("name", loggedInPlayer.getName());
-                put("userName", loggedInPlayer.getUserName());
-                put("playerId", loggedInPlayer.getId());
-            }});
+            Player loggedInPlayer = getLoggedInPlayer(authentication);
+            gameDO.put("loggedIn", createPlayerDO(loggedInPlayer));
         }
 
         List<Object> gameList = new ArrayList<>();
         gameRepo.findAll()
             .stream()
-            .forEach(game -> {
-                Map<String, Object> singleGame = new HashMap<>();
-                    singleGame.put("game_id", game.getId());
-                    singleGame.put("created", game.getCreationDate().getTime());
-                    singleGame.put("gamePlayers", createGamePlayerDO(game));
-                gameList.add(singleGame);
-        });
+            .forEach(game -> gameList.add(new HashMap<String, Object>(){{
+                put("game_id", game.getId());
+                put("created", game.getCreationDate().getTime());
+                put("gamePlayers", createGamePlayerDO(game));
+            }}));
         gameDO.put("gameList", gameList);
         return gameDO;
     }
@@ -54,25 +48,29 @@ public class SalvoController {
     private List<Object> createGamePlayerDO(Game game){
         List<Object> gpDataObject = new ArrayList<>();
         game.gamePlayerSet.stream()
-                          .forEach(gp -> {
-                                Map<String, Object> singleGP = new HashMap<>();
-                                    singleGP.put("gp_id", gp.getId());
-                                    singleGP.put("player", createPlayerDO(gp));
-                              gpDataObject.add(singleGP);
-        });
+                          .forEach(gp -> gpDataObject.add(new HashMap<String, Object>(){{
+                              put("gp_id", gp.getId());
+                              put("player", createPlayerDO(gp.getPlayer()));
+                          }}));
         return gpDataObject;
     }
 
-    private Map<String, Object> createPlayerDO(GamePlayer gp){
-        Map<String, Object> singlePlayer = new HashMap<>();
-            singlePlayer.put("player_id", gp.getPlayer().getId());
-            singlePlayer.put("email", gp.getPlayer().getUserName());
-            singlePlayer.put("name", gp.getPlayer().getName());
-        return singlePlayer;
+    private Map<String, Object> createPlayerDO(Player player){
+        return new HashMap<String, Object>(){{
+            put("player_id", player.getId());
+            put("email", player.getUserName());
+            put("name", player.getName());
+        }};
     }
 
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+    }
+
+    private Player getLoggedInPlayer(Authentication authentication){
+        return !isGuest(authentication)
+            ? playerRepo.findByUserName(authentication.getName())
+            : null;
     }
 
     @RequestMapping("/game_view/{gpId}")
@@ -109,22 +107,20 @@ public class SalvoController {
     }
 
     private Map<String, Object> createGPDOforGameView(GamePlayer gp){
-        Map<String, Object> singleGP = new HashMap<>();
-            singleGP.put("gp_id", gp.getId());
-            singleGP.put("player_id", gp.getPlayer().getId());
-            singleGP.put("name", gp.getPlayer().getName());
-            singleGP.put("user_name", gp.getPlayer().getUserName());
-        return singleGP;
+        return new HashMap<String, Object>(){{
+            put("gp_id", gp.getId());
+            put("player_id", gp.getPlayer().getId());
+            put("name", gp.getPlayer().getName());
+            put("user_name", gp.getPlayer().getUserName());
+        }};
     }
 
     private List<Object> createShipList(GamePlayer gp){
         List<Object> shipList = new ArrayList<>();
-        gp.shipSet.stream().forEach(ship -> {
-            Map<String, Object> singleShip = new HashMap<>();
-                singleShip.put("type", ship.getType());
-                singleShip.put("locations", ship.getLocations());
-            shipList.add(singleShip);
-        });
+        gp.shipSet.stream().forEach(ship -> shipList.add(new HashMap<String, Object>(){{
+            put("type", ship.getType());
+            put("locations", ship.getLocations());
+        }}));
         return shipList;
     }
 
@@ -140,24 +136,23 @@ public class SalvoController {
     }
 
     private Map<String, Object> createSingleSalvoMap(Salvo salvo){
-        Map<String, Object> singleSalvo = new HashMap<>();
-            singleSalvo.put("player_id", salvo.getPlayer().getId());
-            singleSalvo.put("turn", salvo.getTurnNo());
-            singleSalvo.put("locations", salvo.getLocations());
-        return singleSalvo;
+        return new HashMap<String, Object>(){{
+            put("player_id", salvo.getPlayer().getId());
+            put("turn", salvo.getTurnNo());
+            put("locations", salvo.getLocations());
+        }};
     }
 
     @RequestMapping("/leaderboard")
     public List<Object> createLeaderboard () {
-        return playerRepo.findAll().stream().map(player -> {
-            Map<String, Object> singlePlayer = new HashMap<>();
-                singlePlayer.put("player_id", player.getId());
-                singlePlayer.put("player_name", player.getName());
-                singlePlayer.put("scores", player.scoreSet
-                                                 .stream()
-                                                 .map(score -> score.getScoreValue())
-                                                 .collect(Collectors.toList()));
-            return singlePlayer;
-        }).collect(Collectors.toList());
+        return playerRepo.findAll().stream()
+            .map(player -> new HashMap<String, Object>(){{
+                put("player_id", player.getId());
+                put("player_name", player.getName());
+                put("scores", player.scoreSet
+                    .stream()
+                    .map(score -> score.getScoreValue())
+                    .collect(Collectors.toList()));
+        }}).collect(Collectors.toList());
     }
 }
