@@ -18,9 +18,8 @@
             <div id="loginFormPart">
                 <div>
                     <span>You are not logged in, please do it right now!</span>
-                    <button type="button" class="btn btn-info btn-sm ml-4" id="login">Login</button>
                 </div>
-                <div class="d-flex my-3 ml-4 align-items-center">
+                <div class="d-flex my-3 ml-4 align-items-end">
                     <form id="formLogin" onsubmit="return false" class="d-flex flex-column">
                         <label for="userName">Email: 
                             <input type="text" name="userName" class="my-input" placeholder="... email">
@@ -29,6 +28,9 @@
                             <input type="password" name="password" class="my-input" placeholder="... password">
                         </label>
                     </form>
+                    <div>
+                        <button type="button" class="btn btn-info btn-sm ml-4 mb-2" id="login">Login</button>
+                    </div>
                 </div>
             </div>
             <div>
@@ -59,9 +61,9 @@
         </div>
 
         <div id="logged" class="mb-4 my-hide">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between align-items-center">
                 <span id="loginInfo"></span>
-                <button type="button" class="btn btn-info btn-sm ml-4 mb-2" id="logout">Logout</button>
+                <button type="button" class="btn btn-danger btn-sm ml-4" id="logout">Logout</button>
             </div>
         </div>
         
@@ -75,7 +77,7 @@
         </div>
 
         <div id="gameList" class="my-4">
-            <ol id="list"></ol>
+            <ul id="list" class="p-0"></ul>
         </div>
         <div id="leaderboard" class="my-4 my-hide">
             <table class="table">

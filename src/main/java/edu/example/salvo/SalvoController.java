@@ -31,7 +31,7 @@ public class SalvoController {
     public Map<String, Object> createGameDO (Authentication authentication){
         Map<String, Object> gameDO = new HashMap<>();
         if (isGuest(authentication)){
-            gameDO.put("loggedin", null);
+            gameDO.put("loggedIn", null);
         } else {
             Player loggedInPlayer = getLoggedInPlayer(authentication);
             gameDO.put("loggedIn", createPlayerDO(loggedInPlayer));
