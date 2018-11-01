@@ -1,4 +1,5 @@
 import { handleDate } from './handleTime.js'
+import { signIn, login, logout } from './loginFunctions.js'
 
 const requests = async (urls) => {
     try {
@@ -18,7 +19,6 @@ const requests = async (urls) => {
             document.querySelector('#loginInfo').innerHTML = `Welcome ${ data[1].loggedIn.name }!`
             showHide('logged', 'noLogged')
         }
-
     } catch(err) {
         console.log(err)
     }
@@ -48,7 +48,7 @@ const printGameList = ({gameList}) => {
     }).join('')
 }
 
-const workWithScoresArray= (scoresArr) => {
+const prepareScoreObj= (scoresArr) => {
     const playersScoreObj = {
         '0': 0,
         '0.5': 0,
@@ -64,7 +64,7 @@ const printLeaderboard = (dataLB) => {
     
     dataLB.forEach(player => {
         const { player_id, player_name, scores } = player
-        const scoresObj = workWithScoresArray(scores)
+        const scoresObj = prepareScoreObj(scores)
         if(scores.length > 0){
             const scoresSum = scores.reduce((acc, cur) => acc + cur)
             template += 
@@ -78,7 +78,6 @@ const printLeaderboard = (dataLB) => {
                 `
         }
     })
-
     document.querySelector('#lboard').innerHTML = template
 }
 
@@ -108,68 +107,4 @@ const handleShowSignInForm = () => {
 const showHide = (showID, hideID) => {
     document.querySelector(`#${ showID }`).style.display = 'block'
     document.querySelector(`#${ hideID }`).style.display = 'none'
-}
-
-function signIn(){
-    const form = document.querySelector('#formSignIn')
-
-    fetch("/api/players", {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `name=${ form[0].value }&userName=${ form[1].value }&password=${ form[2].value }`,
-    })
-    .then(response => console.log(response))
-    .then(() => {
-        console.log('signed in')
-        location.reload()
-    })
-    .catch(error => console.log('Error:', error))
-}
-
-function login(){
-    const form = document.querySelector('#formLogin')
-    
-    fetch("/api/login", {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `userName=${ form[0].value }&password=${ form[1].value }`,
-    })
-    .then(response => console.log(response))
-    .then(() => {
-        console.log('logged in')
-        location.reload()
-    })
-    .catch(error => console.log('Error:', error))
-
-    // const response = await fetch('/api/login', {
-    //     method: 'post',
-    //     body: JSON.stringify(player)
-    // })
-    // const data = await response.json()
-    // console.log({data})
-}
-
-const logout = () => {
-    fetch("/api/logout",{
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: '',
-    })
-    .then(() => {
-        console.log('logged out')
-        location.reload()
-    })
-    .catch(error => console.log('Error:', error))
 }
