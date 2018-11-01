@@ -12,9 +12,10 @@ export const signIn = async () => {
     })
     // console.log(response)
     if(!response.ok){
-        alert(`Invalid username or password. Error code: ${ response.status }`)
+        alert(`Error code: ${ response.status }`)
         throw new Error(response.status)
     }
+    alert(`Hey ${ form[0].value }! Your account is created - userName: ${ form[1].value }.`)
     location.reload()
 }
 
