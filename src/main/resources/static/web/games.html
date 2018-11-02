@@ -15,26 +15,55 @@
         </div>
 
         <div id="noLogged" class="mb-4">
-            <span>You are not logged in, please do it right now!</span>
-            <div class="d-flex mt-3 ml-4 align-items-center">
-                <form id="form" onsubmit="return false" class="d-flex flex-column">
-                    <label for="userName">Username: 
-                        <input type="text" name="userName" class="my-input">
-                    </label>
-                    <label for="password">Password: 
-                        <input type="password" name="password" class="my-input">
-                    </label>
-                </form>
-                <div class="d-flex flex-column">
-                    <button type="button" class="btn btn-info ml-4 mb-2" id="login">Login</button>
+            <div id="loginFormPart">
+                <div>
+                    <span>You are not logged in, please do it right now!</span>
+                </div>
+                <div class="d-flex my-3 ml-4 align-items-end">
+                    <form id="formLogin" onsubmit="return false" class="d-flex flex-column">
+                        <label for="userName">Email: 
+                            <input type="text" name="userName" class="my-input" placeholder="... email">
+                        </label>
+                        <label for="password">Password: 
+                            <input type="password" name="password" class="my-input" placeholder="... password">
+                        </label>
+                    </form>
+                    <div>
+                        <button type="button" class="btn btn-info btn-sm ml-4 mb-2" id="login">Login</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <p class="m-0">
+                    ... or if you have no account, please 
+                    <span class="text-danger text-uppercase font-weight-bold my-link" id="createAccount">
+                        create new
+                    </span> 
+                    here.
+                </p>
+                <div class="my-hide" id="signInFormPart">
+                    <div class="d-flex my-3 ml-4 align-items-end">
+                        <form id="formSignIn" onsubmit="return false" class="d-flex flex-column">
+                            <label for="userName">Name: 
+                                <input type="text" name="name" class="my-input" placeholder="... name">
+                            </label>
+                            <label for="userName">Email: 
+                                <input type="text" name="userName" class="my-input" placeholder="... email">
+                            </label>
+                            <label for="password">Password: 
+                                <input type="password" name="password" class="my-input" placeholder="... password">
+                            </label>
+                        </form>
+                        <button type="button" class="btn btn-info btn-sm ml-4 mb-2" id="signIn">Sign in</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div id="logged" class="mb-4 my-hide">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between align-items-center">
                 <span id="loginInfo"></span>
-                <button type="button" class="btn btn-info btn-sm ml-4 mb-2" id="logout">Logout</button>
+                <button type="button" class="btn btn-danger btn-sm ml-4" id="logout">Logout</button>
             </div>
         </div>
         
@@ -48,7 +77,7 @@
         </div>
 
         <div id="gameList" class="my-4">
-            <ol id="list"></ol>
+            <ul id="list" class="p-0"></ul>
         </div>
         <div id="leaderboard" class="my-4 my-hide">
             <table class="table">
@@ -70,7 +99,7 @@
         src="https://code.jquery.com/jquery-3.3.1.js"
         integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
         crossorigin="anonymous">
-        </script>
+    </script>
     <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

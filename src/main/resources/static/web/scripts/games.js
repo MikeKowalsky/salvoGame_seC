@@ -1,4 +1,5 @@
 import { handleDate } from './handleTime.js'
+import { signIn, login, logout } from './loginFunctions.js'
 
 const requests = async (urls) => {
     try {
@@ -18,7 +19,6 @@ const requests = async (urls) => {
             document.querySelector('#loginInfo').innerHTML = `Welcome ${ data[1].loggedIn.name }!`
             showHide('logged', 'noLogged')
         }
-
     } catch(err) {
         console.log(err)
     }
@@ -26,21 +26,44 @@ const requests = async (urls) => {
 
 onload = (() => requests(['/api/leaderboard', '/api/games']) )()
 
-const printGameList = ({gameList}) => {
+const printGameList = (gamesRequest) => {
+    const { loggedIn, gameList } = gamesRequest
     const list = document.querySelector('#list')
 
     list.innerHTML = gameList.map(game => {
         const { game_id, created, gamePlayers } = game
         const { date, hour, minute } = handleDate(created)
+        let logInId, gameLink, logInGpId = null
 
-        const player01 = (gamePlayers[0]) ? gamePlayers[0].player.name : ' -- '
-        const player02 = (gamePlayers[1]) ? gamePlayers[1].player.name : ' -- '            
+        const player01 = gamePlayers[0].player.name
+        const player02 = (isGameFull(game)) ? gamePlayers[1].player.name : ' -- '
         
+        if(isLoggedIn(loggedIn)){
+            logInId = loggedIn.player_id
+            if(logInId == gamePlayers[0].player.player_id){
+                logInGpId = gamePlayers[0].gp_id
+            } else {
+                (isGameFull(game) && logInId == gamePlayers[1].player.player_id)
+                    ? logInGpId = gamePlayers[1].gp_id
+                    : null
+            }
+        }
+        
+        if(logInGpId != null){
+            gameLink = `<a href="/web/game.html?gp=${ logInGpId }">
+                            <p class="my-3 font-weight-bold my-text">
+                                Game: ${ game_id }, created ${date} at ${hour}:${minute}
+                            </p>
+                        </a>`
+        } else {
+            gameLink = `<p class="my-3 font-weight-bold my-text">
+                            Game: ${ game_id }, created ${date} at ${hour}:${minute}
+                        </p>`
+        }
+
         return `
-                <li>
-                    <p class="my-3 font-weight-bold my-text">
-                        Game: ${ game_id }, created ${date} at ${hour}:${minute}
-                    </p>
+                <li class="my-4 p-3">
+                    ${ gameLink }
                     <p class="ml-3 mb-0">Player 1: ${ player01 }</p>
                     <p class="ml-3 mb-0">Player 2: ${ player02 }</p>
                 </li>
@@ -48,7 +71,11 @@ const printGameList = ({gameList}) => {
     }).join('')
 }
 
-const workWithScoresArray= (scoresArr) => {
+const isLoggedIn = (loggedIn) => loggedIn == null ? false : true
+
+const isGameFull = (game) =>  (game.gamePlayers.length == 2) ? true : false
+
+const prepareScoreObj= (scoresArr) => {
     const playersScoreObj = {
         '0': 0,
         '0.5': 0,
@@ -64,7 +91,7 @@ const printLeaderboard = (dataLB) => {
     
     dataLB.forEach(player => {
         const { player_id, player_name, scores } = player
-        const scoresObj = workWithScoresArray(scores)
+        const scoresObj = prepareScoreObj(scores)
         if(scores.length > 0){
             const scoresSum = scores.reduce((acc, cur) => acc + cur)
             template += 
@@ -78,7 +105,6 @@ const printLeaderboard = (dataLB) => {
                 `
         }
     })
-
     document.querySelector('#lboard').innerHTML = template
 }
 
@@ -87,6 +113,8 @@ const activateListeners = () => {
     document.querySelector('#runLeaderboard').addEventListener('click', handleRunLeaderboard)
     document.querySelector('#login').addEventListener('click', login)
     document.querySelector('#logout').addEventListener('click', logout)
+    document.querySelector('#createAccount').addEventListener('click', handleShowSignInForm)
+    document.querySelector('#signIn').addEventListener('click', signIn)
 }
 
 const handleRunGameListClick = () => {
@@ -99,51 +127,11 @@ const handleRunLeaderboard = () => {
     document.querySelector('#leaderboard').style.display = 'block'
 }
 
+const handleShowSignInForm = () => {
+    showHide('signInFormPart', 'loginFormPart')
+}
+
 const showHide = (showID, hideID) => {
     document.querySelector(`#${ showID }`).style.display = 'block'
     document.querySelector(`#${ hideID }`).style.display = 'none'
-}
-
-function login(){
-    const form = document.querySelector('#form')
-    
-    fetch("/api/login", {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `userName=${ form[0].value }&password=${ form[1].value }`,
-    })
-    .then(response => console.log(response))
-    .then(() => {
-        console.log('logged in')
-        location.reload()
-    })
-    .catch(error => console.log('Error:', error))
-
-    // const response = await fetch('/api/login', {
-    //     method: 'post',
-    //     body: JSON.stringify(player)
-    // })
-    // const data = await response.json()
-    // console.log({data})
-}
-
-const logout = () => {
-    fetch("/api/logout",{
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: '',
-    })
-    .then(() => {
-        console.log('logged out')
-        location.reload()
-    })
-    .catch(error => console.log('Error:', error))
 }

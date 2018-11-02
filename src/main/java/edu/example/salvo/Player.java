@@ -27,6 +27,11 @@ public class Player {
 
     Player(){}
 
+    Player(String userName, String password){
+        this.userName = userName;
+        this.password = password;
+    }
+
     Player(String name, String userName, String password){
         this.name = name;
         this.userName = userName;
