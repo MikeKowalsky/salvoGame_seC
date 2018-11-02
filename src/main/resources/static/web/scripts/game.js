@@ -94,13 +94,20 @@ const basicInfo = (data) => {
                     ? this.dataIn.opponent.name
                     : null
             }
-        }        
+        }
     })
 }
 
 const request = async (url) => {
     // const response = await fetch('/api/game_view/13')
     const response = await fetch(url)
+    if(!response.ok){
+        const resposeJson = await response.json()
+        document.querySelector('#allContent').innerHTML = resposeJson.error
+        // alert(`${ resposeJson.error } Error code: ${ response.status }`)
+        throw new Error(resposeJson.error)
+    }
+    console.log(response)
     const data = await response.json()
     console.log({data})
     basicInfo(data)

@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -92,7 +89,9 @@ public class SalvoController {
 
     // adding info to gameView JSON
     @RequestMapping("/game_view/{gpId}")
-    public Map<String, Object> createGameView(@PathVariable long gpId) {
+    public ResponseEntity<Map<String, Object>> createGameView(@PathVariable long gpId, Authentication auth){
+//    public Map<String, Object> createGameView(@PathVariable long gpId, Authentication auth)
+//                                                                throws UserIsNotAuthorized, NoLoggedInUser {
         GamePlayer currentGP = gamePlayerRepo.findById(gpId);
         GamePlayer opponentGP = getOpponentGP(currentGP);
 
@@ -108,7 +107,28 @@ public class SalvoController {
             }
             singleGameView.put("ships", createShipList(currentGP));
             singleGameView.put("salvoes", createSalvoList(currentGP, opponentGP));
-        return singleGameView;
+
+        if(isGuest(auth)){//this one is redundant, because not login user has no authority to see /game_View at all
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(createMap("error", "Please login first"));
+//            return new ResponseEntity<>(createMap("error", "Please login first"), HttpStatus.FORBIDDEN);
+//            throw new NoLoggedInUser("Please login first");
+        } else {
+            Player loggedInPlayer = getLoggedInPlayer(auth);
+            if (loggedInPlayer.getId() == currentGP.getPlayer().getId()){
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(singleGameView);
+//                return new ResponseEntity<>(singleGameView, HttpStatus.OK);
+            } else {
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(createMap("error", "This is not your game!"));
+//                return new ResponseEntity<>(createMap("error", "This is not your game!"), HttpStatus.UNAUTHORIZED);
+//                throw new UserIsNotAuthorized("This is not your game!");
+            }
+        }
     }
 
     // adding info to gameView JSON
@@ -151,6 +171,22 @@ public class SalvoController {
             put("locations", salvo.getLocations());
         }};
     }
+
+
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+//    private class UserIsNotAuthorized extends Exception{
+//        public UserIsNotAuthorized (String message){
+//            super(message);
+//        }
+//    }
+//
+//    @ResponseStatus(HttpStatus.FORBIDDEN)
+//    private class NoLoggedInUser extends Exception{
+//        public NoLoggedInUser (String message){
+//            super(message);
+//        }
+//    }
+
 
     // create leaderboard data
     @RequestMapping("/leaderboard")
