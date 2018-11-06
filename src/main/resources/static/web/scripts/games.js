@@ -18,6 +18,7 @@ const requests = async (urls) => {
         if(data[1].loggedIn != null){
             document.querySelector('#loginInfo').innerHTML = `Welcome ${ data[1].loggedIn.name }!`
             showHide('logged', 'noLogged')
+            showHide('loggedNewGame', 'noLogged')
         }
     } catch(err) {
         console.log(err)
@@ -115,6 +116,7 @@ const activateListeners = () => {
     document.querySelector('#logout').addEventListener('click', logout)
     document.querySelector('#createAccount').addEventListener('click', handleShowSignInForm)
     document.querySelector('#signIn').addEventListener('click', signIn)
+    document.querySelector('#createGame').addEventListener('click', createGame)
 }
 
 const handleRunGameListClick = () => {
@@ -135,3 +137,23 @@ const showHide = (showID, hideID) => {
     document.querySelector(`#${ showID }`).style.display = 'block'
     document.querySelector(`#${ hideID }`).style.display = 'none'
 }
+
+const createGame = async () => {
+    const response = await fetch("/api/games", {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+    })
+    if(!response.ok){
+        alert(`Error code: ${ response.status }`)
+        throw new Error(response.status)
+    }
+    const json = await response.json() 
+    console.log(json)
+    window.location = createUrlNForNewGame(json);
+}
+
+const createUrlNForNewGame = (json) => `/web/game.html?gp=${ json.new_GamePlayerID }`

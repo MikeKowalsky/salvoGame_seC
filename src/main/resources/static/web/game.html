@@ -12,8 +12,11 @@
 
         <h1 class="my-4 text-warning">Salvo game</h1>
 
-        <div id="vueInfo"> 
-            <p class="h4">Welcome back {{ playerName }}!</p>
+        <div id="vueInfo">
+            <div class="d-flex justify-content-between">
+                <p class="h4">Welcome back {{ playerName }}!</p>
+                <button class="btn btn-danger btn-sm" @click="backToGameList">back</button>
+            </div>
             <p class="m-2">Game no. {{ dataIn.game_id }}, created {{ creationDate }}.</p>
             <p class="m-2">
                 <span>Players: {{ playerName }} vs. </span>
