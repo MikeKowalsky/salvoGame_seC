@@ -90,8 +90,6 @@ public class SalvoController {
     // adding info to gameView JSON
     @RequestMapping("/game_view/{gpId}")
     public ResponseEntity<Map<String, Object>> createGameView(@PathVariable long gpId, Authentication auth){
-//    public Map<String, Object> createGameView(@PathVariable long gpId, Authentication auth)
-//                                                                throws UserIsNotAuthorized, NoLoggedInUser {
         GamePlayer currentGP = gamePlayerRepo.findById(gpId);
         GamePlayer opponentGP = getOpponentGP(currentGP);
 
@@ -112,21 +110,16 @@ public class SalvoController {
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
                     .body(createMap("error", "Please login first"));
-//            return new ResponseEntity<>(createMap("error", "Please login first"), HttpStatus.FORBIDDEN);
-//            throw new NoLoggedInUser("Please login first");
         } else {
             Player loggedInPlayer = getLoggedInPlayer(auth);
             if (loggedInPlayer.getId() == currentGP.getPlayer().getId()){
                 return ResponseEntity
                         .status(HttpStatus.OK)
                         .body(singleGameView);
-//                return new ResponseEntity<>(singleGameView, HttpStatus.OK);
             } else {
                 return ResponseEntity
                         .status(HttpStatus.UNAUTHORIZED)
                         .body(createMap("error", "This is not your game!"));
-//                return new ResponseEntity<>(createMap("error", "This is not your game!"), HttpStatus.UNAUTHORIZED);
-//                throw new UserIsNotAuthorized("This is not your game!");
             }
         }
     }
@@ -173,21 +166,6 @@ public class SalvoController {
     }
 
 
-//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-//    private class UserIsNotAuthorized extends Exception{
-//        public UserIsNotAuthorized (String message){
-//            super(message);
-//        }
-//    }
-//
-//    @ResponseStatus(HttpStatus.FORBIDDEN)
-//    private class NoLoggedInUser extends Exception{
-//        public NoLoggedInUser (String message){
-//            super(message);
-//        }
-//    }
-
-
     // create leaderboard data
     @RequestMapping("/leaderboard")
     public List<Object> createLeaderboard () {
@@ -224,5 +202,19 @@ public class SalvoController {
 
         Player newPlayer = playerRepo.save(new Player(name, userName, password));
         return new ResponseEntity<>(createMap("Username", newPlayer.getUserName()), HttpStatus.CREATED);
+    }
+
+    //create game
+    @RequestMapping(path = "/games", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> createGame(Authentication auth){
+        if(isGuest(auth)){
+            return new ResponseEntity<>(createMap("error", "You need to login"), HttpStatus.UNAUTHORIZED);
+        }
+
+        Game newGame = gameRepo.save(new Game());
+        GamePlayer newGamePlayer = new GamePlayer(newGame, getLoggedInPlayer(auth));
+        gamePlayerRepo.save(newGamePlayer);
+
+        return new ResponseEntity<>(createMap("new_GamePlayerID", newGamePlayer.getId()), HttpStatus.CREATED);
     }
 }

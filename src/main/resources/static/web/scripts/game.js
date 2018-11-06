@@ -94,6 +94,11 @@ const basicInfo = (data) => {
                     ? this.dataIn.opponent.name
                     : null
             }
+        },
+        methods:{
+            backToGameList(){
+                window.location = '/web/games.html'
+            }
         }
     })
 }
