@@ -224,7 +224,7 @@ public class SalvoController {
         if(isGuest(auth)){
             return new ResponseEntity<>(createMap("error", "You need to login."), HttpStatus.UNAUTHORIZED);
         }
-        if(gameRepo.existsById(gameId)){
+        if(!gameRepo.existsById(gameId)){
             return new ResponseEntity<>(createMap("error", "Game with this id doesn't exist."), HttpStatus.FORBIDDEN);
         }
 
