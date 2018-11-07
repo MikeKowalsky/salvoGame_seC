@@ -57,4 +57,8 @@ public class Game {
                 ", creationDate=" + creationDate +
                 '}';
     }
+
+    boolean isFull(){
+        return this.gamePlayerSet.size() > 1;
+    }
 }

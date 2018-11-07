@@ -1,23 +1,25 @@
 import { handleDate } from './handleTime.js'
 import { signIn, login, logout } from './loginFunctions.js'
+import { createGame, joinGame } from './createJoinFunctions.js'
 
 const requests = async (urls) => {
     try {
         const data = await Promise.all(
             urls.map(
                 url => fetch(url).then(
-                            response => response.json()
+                    response => response.json()
                 )
             )
         )
-        activateListeners()
         printLeaderboard(data[0])
         printGameList(data[1])
-        console.log(data[1])
+        activateListeners()
+        activateListenersJoinButtons()
 
         if(data[1].loggedIn != null){
             document.querySelector('#loginInfo').innerHTML = `Welcome ${ data[1].loggedIn.name }!`
             showHide('logged', 'noLogged')
+            showHide('loggedNewGame', 'noLogged')
         }
     } catch(err) {
         console.log(err)
@@ -33,7 +35,8 @@ const printGameList = (gamesRequest) => {
     list.innerHTML = gameList.map(game => {
         const { game_id, created, gamePlayers } = game
         const { date, hour, minute } = handleDate(created)
-        let logInId, gameLink, logInGpId = null
+        let logInId, logInGpId, gameLink = null
+        let joinButton = ''
 
         const player01 = gamePlayers[0].player.name
         const player02 = (isGameFull(game)) ? gamePlayers[1].player.name : ' -- '
@@ -61,9 +64,19 @@ const printGameList = (gamesRequest) => {
                         </p>`
         }
 
+        if(showJoinButton(game, loggedIn, gamePlayers, logInId)){
+            joinButton = `<button 
+                            class="btn btn-danger btn-sm join-button"
+                            id="game${ game_id }"
+                            data-game_id="${ game_id }" >
+                                Join game ${ game_id } with ${ gamePlayers[0].player.name }!
+                            </button>`
+        }
+
         return `
-                <li class="my-4 p-3">
+                <li class="my-4 p-3" id="gameId${ game_id }">
                     ${ gameLink }
+                    ${ joinButton }
                     <p class="ml-3 mb-0">Player 1: ${ player01 }</p>
                     <p class="ml-3 mb-0">Player 2: ${ player02 }</p>
                 </li>
@@ -73,7 +86,12 @@ const printGameList = (gamesRequest) => {
 
 const isLoggedIn = (loggedIn) => loggedIn == null ? false : true
 
-const isGameFull = (game) =>  (game.gamePlayers.length == 2) ? true : false
+const isGameFull = (game) => (game.gamePlayers.length == 2) ? true : false
+
+const showJoinButton = (game, loggedIn, gamePlayers, logInId) => 
+    isGameFull(game) || !isLoggedIn(loggedIn) || gamePlayers[0].player.player_id == logInId
+        ? false 
+        : true
 
 const prepareScoreObj= (scoresArr) => {
     const playersScoreObj = {
@@ -86,7 +104,6 @@ const prepareScoreObj= (scoresArr) => {
 }
 
 const printLeaderboard = (dataLB) => {
-    console.log({dataLB})
     let template = '';
     
     dataLB.forEach(player => {
@@ -95,14 +112,12 @@ const printLeaderboard = (dataLB) => {
         if(scores.length > 0){
             const scoresSum = scores.reduce((acc, cur) => acc + cur)
             template += 
-                `
-                    <tr>
-                        <td>${ player_id }</td>
-                        <td>${ player_name }</td>
-                        <td class="text-center">${ scoresObj['1'] } - ${ scoresObj['0.5'] } - ${ scoresObj['0'] } </td>
-                        <td class="text-center">${ scoresSum }</td>
-                    </tr>
-                `
+                `<tr>
+                    <td>${ player_id }</td>
+                    <td>${ player_name }</td>
+                    <td class="text-center">${ scoresObj['1'] } - ${ scoresObj['0.5'] } - ${ scoresObj['0'] } </td>
+                    <td class="text-center">${ scoresSum }</td>
+                </tr>`
         }
     })
     document.querySelector('#lboard').innerHTML = template
@@ -115,6 +130,12 @@ const activateListeners = () => {
     document.querySelector('#logout').addEventListener('click', logout)
     document.querySelector('#createAccount').addEventListener('click', handleShowSignInForm)
     document.querySelector('#signIn').addEventListener('click', signIn)
+    document.querySelector('#createGame').addEventListener('click', createGame)
+}
+
+const activateListenersJoinButtons = () => {
+    Array.from(document.querySelectorAll('.join-button'))
+         .forEach(btn => btn.addEventListener('click', joinGame))
 }
 
 const handleRunGameListClick = () => {
