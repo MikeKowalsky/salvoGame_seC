@@ -217,4 +217,28 @@ public class SalvoController {
 
         return new ResponseEntity<>(createMap("new_GamePlayerID", newGamePlayer.getId()), HttpStatus.CREATED);
     }
+
+    //join game
+    @RequestMapping(path = "/game/{gameId}/players", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> joinGame(Authentication auth, @PathVariable long gameId){
+        if(isGuest(auth)){
+            return new ResponseEntity<>(createMap("error", "You need to login."), HttpStatus.UNAUTHORIZED);
+        }
+        if(!gameRepo.existsById(gameId)){
+            return new ResponseEntity<>(createMap("error", "Game with this id doesn't exist."), HttpStatus.FORBIDDEN);
+        }
+
+        Game currentGame = gameRepo.findById(gameId);
+
+        if(currentGame.isFull()){
+            return new ResponseEntity<>(createMap("error", "Game has already two players."), HttpStatus.FORBIDDEN);
+        }
+
+        Player loggedInPlayer = playerRepo.findByUserName(auth.getName());
+        GamePlayer newGamePlayer = new GamePlayer(currentGame,loggedInPlayer);
+        gamePlayerRepo.save(newGamePlayer);
+
+        return new ResponseEntity<>(createMap("new_GamePlayerID", newGamePlayer.getId()), HttpStatus.CREATED);
+    }
+
 }
