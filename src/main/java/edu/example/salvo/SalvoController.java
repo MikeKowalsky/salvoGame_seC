@@ -16,12 +16,12 @@ public class SalvoController {
 
     @Autowired
     private GameRepository gameRepo;
-
     @Autowired
     private PlayerRepository playerRepo;
-
     @Autowired
     private GamePlayerRepository gamePlayerRepo;
+    @Autowired
+    private ShipRepository shipRepo;
 
     // creating data for game list
     @RequestMapping("/games")
@@ -241,4 +241,39 @@ public class SalvoController {
         return new ResponseEntity<>(createMap("new_GamePlayerID", newGamePlayer.getId()), HttpStatus.CREATED);
     }
 
+    //add ships
+    @RequestMapping(path = "/games/players/{gpId}/ships", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> addShips(Authentication auth,
+                                                        @PathVariable long gpId,
+                                                        @RequestBody ArrayList<Ship> shipArray){
+        System.out.println("gppId" + gpId);
+        if(isGuest(auth)){
+            return new ResponseEntity<>(createMap("error", "You need to login."), HttpStatus.UNAUTHORIZED);
+        }
+        if(!gamePlayerRepo.existsById(gpId)){
+            return new ResponseEntity<>(createMap("error", "GamePlayer doesn't exist."), HttpStatus.UNAUTHORIZED);
+        }
+
+        GamePlayer currentGP = gamePlayerRepo.findById(gpId);
+        Player loggedInPlayer = playerRepo.findByUserName(auth.getName());
+
+        if(currentGP.getPlayer().getId() != loggedInPlayer.getId()){
+            return new ResponseEntity<>(createMap("error", "You are not allowed."), HttpStatus.UNAUTHORIZED);
+        }
+
+        if(currentGP.shipSet.size() > 0){
+            return new ResponseEntity<>(createMap("error", "Ships are already placed."), HttpStatus.FORBIDDEN);
+        }
+
+        Map<Object,Object> result = new HashMap<>();
+
+        shipArray.forEach(ship -> {
+            currentGP.addShip(ship);
+            shipRepo.save(ship);
+            result.put(ship.getId(), ship.getLocations());
+        });
+
+        gamePlayerRepo.save(currentGP);
+        return new ResponseEntity<>(createMap("Added Ships", result), HttpStatus.CREATED);
+    }
 }

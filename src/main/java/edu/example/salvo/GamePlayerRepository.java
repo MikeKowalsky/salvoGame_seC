@@ -8,5 +8,6 @@ import java.util.List;
 @RepositoryRestResource
 public interface GamePlayerRepository extends JpaRepository<GamePlayer, Long> {
     GamePlayer findById(long id);
+    boolean existsById(long id);
 }
 

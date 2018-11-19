@@ -1,69 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Game</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="styles/game.css">
-</head>
-<body>
-
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="styles/game.css" />
+  </head>
+  <body>
     <div class="container" id="allContent">
+      <h1 class="my-4 text-warning">Salvo game</h1>
 
-        <h1 class="my-4 text-warning">Salvo game</h1>
-
-        <div id="vueInfo">
-            <div class="d-flex justify-content-between">
-                <p class="h4">Welcome back {{ playerName }}!</p>
-                <button class="btn btn-danger btn-sm" @click="backToGameList">back</button>
-            </div>
-            <p class="m-2">Game no. {{ dataIn.game_id }}, created {{ creationDate }}.</p>
-            <p class="m-2">
-                <span>Players: {{ playerName }} vs. </span>
-                <span v-if="opponentName != null">{{ opponentName }}</span>
-                <span v-else>     ( ... waiting for second player)</span>
-            </p>
+      <div id="vueInfo">
+        <div class="d-flex justify-content-between">
+          <p class="h4">Welcome back {{ playerName }}!</p>
+          <button class="btn btn-danger btn-sm" @click="backToGameList">
+            back
+          </button>
         </div>
+        <p class="m-2">
+          Game no. {{ dataIn.game_id }}, created {{ creationDate }}.
+        </p>
+        <p class="m-2">
+          <span>Players: {{ playerName }} vs. </span>
+          <span v-if="opponentName != null">{{ opponentName }}</span>
+          <span v-else> ( ... waiting for second player)</span>
+        </p>
+      </div>
 
-        <div id="vueGrid" class="mt-4 row">
-            <div class="col-sm-12 col-md-6 my-4">
-                <p class="h5">Your battlefield</p>
-                <div>
-                    <table id="playersGrid">
-                        <tr v-for="(letter, index) in columnArr" :key="index">
-                            <td 
-                                v-for="(number, i) in rowArr" :key="i">
-                                <p v-if="letter == '' || number == ''">
-                                    {{ letter }}{{ number }}
-                                </p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div v-if="opponentName != null" class="col-sm-12 col-md-6  my-4">
-                <p class="h5">{{ opponentName }} battlefield</p>
-                <div>
-                    <table id="opponentsGrid">
-                        <tr v-for="(letter, index) in columnArr" :key="index">
-                            <td 
-                                v-for="(number, i) in rowArr" :key="i">
-                                <p v-if="letter == '' || number == ''">
-                                    {{ letter }}{{ number }}
-                                </p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
+      <div id="vueGrid" class="mt-4 row">
+        <div class="col-sm-12 col-md-6 my-4">
+          <p class="h5">Your battlefield</p>
+          <button class="btn btn-danger btn-sm my-4" @click="sendShips()">
+            Add Ships
+          </button>
+          <div>
+            <table id="playersGrid">
+              <tr v-for="(letter, index) in columnArr" :key="index">
+                <td v-for="(number, i) in rowArr" :key="i">
+                  <p v-if="letter == '' || number == ''">
+                    {{ letter }}{{ number }}
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </div>
         </div>
+        <div v-if="opponentName != null" class="col-sm-12 col-md-6  my-4">
+          <p class="h5">{{ opponentName }} battlefield</p>
+          <div>
+            <table id="opponentsGrid">
+              <tr v-for="(letter, index) in columnArr" :key="index">
+                <td v-for="(number, i) in rowArr" :key="i">
+                  <p v-if="letter == '' || number == ''">
+                    {{ letter }}{{ number }}
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
-   
+
     <script src="scripts/vue.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
     <script src="scripts/game.js"></script>
-    
-</body>
+  </body>
 </html>
