@@ -246,7 +246,6 @@ public class SalvoController {
     public ResponseEntity<Map<String, Object>> addShips(Authentication auth,
                                                         @PathVariable long gpId,
                                                         @RequestBody ArrayList<Ship> shipArray){
-        System.out.println("gppId" + gpId);
         if(isGuest(auth)){
             return new ResponseEntity<>(createMap("error", "You need to login."), HttpStatus.UNAUTHORIZED);
         }

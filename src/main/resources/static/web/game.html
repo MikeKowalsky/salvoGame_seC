@@ -35,6 +35,12 @@
       <div id="vueGrid" class="mt-4 row">
         <div class="col-sm-12 col-md-6 my-4">
           <p class="h5">Your battlefield</p>
+          <button
+            class="btn btn-danger btn-sm my-4"
+            @click="placeShipsButton()"
+          >
+            Place ships
+          </button>
           <button class="btn btn-danger btn-sm my-4" @click="sendShips()">
             Add Ships
           </button>
@@ -50,18 +56,54 @@
             </table>
           </div>
         </div>
-        <div v-if="opponentName != null" class="col-sm-12 col-md-6  my-4">
-          <p class="h5">{{ opponentName }} battlefield</p>
-          <div>
-            <table id="opponentsGrid">
-              <tr v-for="(letter, index) in columnArr" :key="index">
-                <td v-for="(number, i) in rowArr" :key="i">
-                  <p v-if="letter == '' || number == ''">
-                    {{ letter }}{{ number }}
-                  </p>
-                </td>
-              </tr>
-            </table>
+        <div v-if="!shipAlreadyPlaced" class="col-sm-12 col-md-6  my-4">
+          <div v-if="opponentName != null">
+            <p class="h5">{{ opponentName }} battlefield</p>
+            <div>
+              <table id="opponentsGrid">
+                <tr v-for="(letter, index) in columnArr" :key="index">
+                  <td v-for="(number, i) in rowArr" :key="i">
+                    <p v-if="letter == '' || number == ''">
+                      {{ letter }}{{ number }}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div v-else class="col-sm-12 col-md-6 my-4">
+          <div class="d-flex flex-column">
+            <p class="h5 mb-4">Choose ship type:</p>
+            <div>
+              <input type="radio" name="shipType" id="AC5" />
+              <label for="AC5">Aircraft Carrier</label>
+            </div>
+            <div>
+              <input type="radio" name="shipType" id="BS4" />
+              <label for="BS4">Battleship</label>
+            </div>
+            <div>
+              <input type="radio" name="shipType" id="DE3" />
+              <label for="DE3">Destroyer</label>
+            </div>
+            <div>
+              <input type="radio" name="shipType" id="SM3" />
+              <label for="SM3">Submarine</label>
+            </div>
+            <div>
+              <input type="radio" name="shipType" id="PB2" />
+              <label for="PB2">Patrol Boat</label>
+            </div>
+            <p class="h5 my-4">Ship orientation:</p>
+            <div>
+              <input type="radio" name="shipOrientation" id="hor" checked />
+              <label for="hor">Horizontal</label>
+            </div>
+            <div>
+              <input type="radio" name="shipOrientation" id="ver" />
+              <label for="ver">Vertical</label>
+            </div>
           </div>
         </div>
       </div>

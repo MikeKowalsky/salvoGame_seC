@@ -1,25 +1,28 @@
+td {
+  border: 1px solid black;
+  width: 30px;
+  height: 30px;
 
-td{
-    border: 1px solid black;
-    width: 30px;
-    height: 30px;
-
-    text-align: center;
-    vertical-align: middle;
+  text-align: center;
+  vertical-align: middle;
 }
 
-td > p{
-    margin: 0;
+td > p {
+  margin: 0;
 }
 
-.shipLoc{
-    background-color: green;
+.shipLoc {
+  background-color: green;
 }
 
-.salvoLoc{
-    background-color: yellow;
+.salvoLoc {
+  background-color: yellow;
 }
 
-.hitLoc{
-    background-color: red;
+.hitLoc {
+  background-color: red;
+}
+
+.shipOnMoveCorrect {
+  background-color: lightgreen;
 }

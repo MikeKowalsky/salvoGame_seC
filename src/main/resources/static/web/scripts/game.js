@@ -7,11 +7,15 @@ const printGrids = data => {
     data: {
       columnArr: columnArray,
       rowArr: rowArray,
-      dataIn: data
+      dataIn: data,
+      playersCellsArr: []
     },
     computed: {
       opponentName() {
         return this.dataIn.opponent !== null ? this.dataIn.opponent.name : null;
+      },
+      shipAlreadyPlaced() {
+        return this.dataIn.ships.length < 1;
       }
     },
     mounted() {
@@ -108,6 +112,84 @@ const printGrids = data => {
             location.reload();
           })
           .catch(err => console.log(err));
+      },
+      placeShipsButton() {
+        this.playersCellsArr = Array.from(
+          document.querySelector("#playersGrid").querySelectorAll("td")
+        ).filter(td => td.id.length >= 2 && !td.id.charAt(0).match(/\d/));
+        console.log(this.playersCellsArr);
+
+        this.playersCellsArr.forEach(td =>
+          td.addEventListener("mouseover", this.printMouseoverCell)
+        );
+      },
+      printMouseoverCell(e) {
+        // change name - this one is not proper
+        const pointerLocation = e.target.id;
+        console.log(pointerLocation);
+
+        //reset this.playersCellsArr - remove old ship position
+        this.playersCellsArr.forEach(td =>
+          td.classList.remove("shipOnMoveCorrect")
+        );
+
+        const shipType = this.whichShipTypeToPlace();
+        if (shipType) {
+          const shipSize = shipType.slice(2);
+          const shipOrientation = this.whichShipOrientationToPlace(); // hor or ver
+          const shipLocationsArrayToMark = this.createShipLocationsArrayToMark(
+            pointerLocation,
+            shipSize,
+            shipOrientation
+          );
+          console.log(
+            this.verifyShipLocationsArrayToMark(shipLocationsArrayToMark)
+          );
+          this.verifyShipLocationsArrayToMark(shipLocationsArrayToMark)
+            ? this.showShipOnPlaceingCorrect(shipLocationsArrayToMark)
+            : this.showShipOnPlaceingError(shipLocationsArrayToMark);
+        }
+      },
+      whichShipTypeToPlace() {
+        const shipTypeButton = document.querySelector(
+          "input[name=shipType]:checked"
+        );
+        return shipTypeButton ? shipTypeButton.id : null;
+      },
+      whichShipOrientationToPlace() {
+        return document.querySelector("input[name=shipOrientation]:checked").id;
+      },
+      createShipLocationsArrayToMark(pointer, size, orientation) {
+        const arr = [];
+        const pointerParts = [pointer.charAt(0), parseInt(pointer.slice(1))];
+        for (let i = 0; i < size; i++) {
+          if (orientation == "hor") {
+            const colIndex = this.rowArr.indexOf(pointerParts[1]);
+            // arr.push(`${pointerParts[0]}${pointerParts[1] + i}`);
+            arr.push(`${pointerParts[0]}${this.rowArr[colIndex + i]}`);
+          } else {
+            const rowIndex = this.columnArr.indexOf(pointerParts[0]);
+            arr.push(`${this.columnArr[rowIndex + i]}${pointerParts[1]}`);
+          }
+        }
+        console.log(arr);
+        return arr;
+      },
+      verifyShipLocationsArrayToMark(arr) {
+        const lastElement = arr[arr.length - 1];
+        return lastElement.includes("undefined") ? false : true;
+      },
+      showShipOnPlaceingCorrect(arr) {
+        arr.forEach(td =>
+          document.querySelector(`#${td}`).classList.add("shipOnMoveCorrect")
+        );
+      },
+      showShipOnPlaceingError(arr) {
+        arr
+          .filter(td => !td.includes("undefined"))
+          .forEach(td =>
+            document.querySelector(`#${td}`).classList.add("shipOnMoveError")
+          );
       }
     }
   });
