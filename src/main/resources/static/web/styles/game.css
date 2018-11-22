@@ -26,3 +26,20 @@ td > p {
 .shipOnMoveCorrect {
   background-color: lightgreen;
 }
+
+.shipOnMoveError {
+  background-color: red;
+}
+
+.my-margin {
+  margin-top: 60px;
+  margin-left: 50px;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+}
+
+.ship {
+  background-color: green;
+}
