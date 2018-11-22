@@ -121,9 +121,8 @@ const printGrids = data => {
           document.querySelector("#playersGrid").querySelectorAll("td")
         ).filter(td => td.id.length >= 2 && !td.id.charAt(0).match(/\d/));
 
-        this.playersCellsArr.forEach(
-          td => td.addEventListener("mouseover", this.printMouseoverShipMark)
-          // td.addEventListener("click", this.handleMouseClick);
+        this.playersCellsArr.forEach(td =>
+          td.addEventListener("mouseover", this.printMouseoverShipMark)
         );
       },
       printMouseoverShipMark(e) {
@@ -146,9 +145,6 @@ const printGrids = data => {
             shipSize,
             shipOrientation
           );
-          // console.log(
-          //   this.verifyShipLocationsArrayToMark(this.shipLocationsArrayToMark)
-          // );
           if (
             this.verifyShipLocationsArrayToMark(this.shipLocationsArrayToMark)
           ) {
@@ -225,7 +221,7 @@ const printGrids = data => {
         this.arrToSend.push(oneShipObject);
         console.log(this.arrToSend);
 
-        // makring on a grid
+        // marking on a grid
         // this.saveAndMarkShip(this.shipLocationsArrayToMark);
         this.saveAndMarkShip();
 
@@ -239,6 +235,16 @@ const printGrids = data => {
         document
           .querySelector(`.${this.shipType}`)
           .classList.add("strikethrough");
+
+        // remove event listeners
+        // this.playersCellsArr.forEach(id =>
+        //   document
+        //     .querySelector(`#${td}`)
+        //     .removeEventListener("click", this.handleMouseClick)
+        // );
+        this.playersCellsArr.forEach(td =>
+          td.removeEventListener("click", this.handleMouseClick)
+        );
       },
       saveAndMarkShip() {
         this.shipLocationsArrayToMark.forEach(td =>
