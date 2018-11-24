@@ -11,7 +11,8 @@ const printGrids = data => {
       playersCellsArr: [],
       shipLocationsArrayToMark: [],
       shipType: null,
-      arrToSend: []
+      arrToSend: [],
+      showSaveShipsButton: false
     },
     computed: {
       opponentName() {
@@ -83,19 +84,7 @@ const printGrids = data => {
         });
       },
       sendShips() {
-        const shipArray = [
-          {
-            shipType: "aircraftCarrier",
-            locations: ["A1", "A2", "A3", "A4", "A5"]
-          },
-          { shipType: "battleship", locations: ["E1", "E2", "E3", "E4"] },
-          { shipType: "submarine", locations: ["C1", "C2", "C3"] },
-          { shipType: "destroyer", locations: ["C5", "C6", "C7"] },
-          { shipType: "patrolBoat", locations: ["G1", "G2"] }
-        ];
-
         const url = `/api/games/players/${this.dataIn.player.gp_id}/ships`;
-        console.log(url);
 
         fetch(url, {
           credentials: "include",
@@ -104,7 +93,7 @@ const printGrids = data => {
             Accept: "application/json",
             "Content-Type": "application/json"
           },
-          body: JSON.stringify(shipArray)
+          body: JSON.stringify(this.arrToSend)
         })
           .then(response => {
             console.log(response);
@@ -171,14 +160,12 @@ const printGrids = data => {
         for (let i = 0; i < size; i++) {
           if (orientation == "hor") {
             const colIndex = this.rowArr.indexOf(pointerParts[1]);
-            // arr.push(`${pointerParts[0]}${pointerParts[1] + i}`);
             arr.push(`${pointerParts[0]}${this.rowArr[colIndex + i]}`);
           } else {
             const rowIndex = this.columnArr.indexOf(pointerParts[0]);
             arr.push(`${this.columnArr[rowIndex + i]}${pointerParts[1]}`);
           }
         }
-        // console.log(arr);
         return arr;
       },
       verifyShipLocationsArrayToMark(arr) {
@@ -222,7 +209,6 @@ const printGrids = data => {
         console.log(this.arrToSend);
 
         // marking on a grid
-        // this.saveAndMarkShip(this.shipLocationsArrayToMark);
         this.saveAndMarkShip();
 
         // disable this radio button
@@ -231,20 +217,19 @@ const printGrids = data => {
         ).filter(inp => inp.id.includes(this.shipType));
         thisInput[0].checked = false;
         thisInput[0].setAttribute("disabled", "disabled");
-        console.log(`.${this.shipType}`);
         document
           .querySelector(`.${this.shipType}`)
           .classList.add("strikethrough");
 
         // remove event listeners
-        // this.playersCellsArr.forEach(id =>
-        //   document
-        //     .querySelector(`#${td}`)
-        //     .removeEventListener("click", this.handleMouseClick)
-        // );
         this.playersCellsArr.forEach(td =>
           td.removeEventListener("click", this.handleMouseClick)
         );
+
+        //showSaveShipsButton
+        if (this.arrToSend.length == 5) {
+          this.showSaveShipsButton = true;
+        }
       },
       saveAndMarkShip() {
         this.shipLocationsArrayToMark.forEach(td =>

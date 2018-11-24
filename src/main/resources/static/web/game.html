@@ -42,8 +42,12 @@
             >
               Place ships
             </button>
-            <button class="btn btn-danger btn-sm my-4" @click="sendShips()">
-              Add Ships
+            <button
+              v-if="showSaveShipsButton"
+              class="btn btn-danger btn-sm my-4"
+              @click="sendShips()"
+            >
+              Save Ships
             </button>
           </div>
           <div>
