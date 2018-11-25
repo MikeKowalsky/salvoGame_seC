@@ -82,25 +82,55 @@
           <div class="d-flex flex-column my-margin">
             <p class="h5 mb-4">Choose ship type:</p>
             <div>
-              <input type="radio" name="shipType" id="5aircraftCarrier" />
+              <input
+                type="radio"
+                name="shipType"
+                id="5aircraftCarrier"
+                @change="setShipType"
+                disabled
+              />
               <label for="5aircraftCarrier" class="aircraftCarrier"
                 >Aircraft Carrier</label
               >
             </div>
             <div>
-              <input type="radio" name="shipType" id="4battleship" />
+              <input
+                type="radio"
+                name="shipType"
+                id="4battleship"
+                @change="setShipType"
+                disabled
+              />
               <label for="4battleship" class="battleship">Battleship</label>
             </div>
             <div>
-              <input type="radio" name="shipType" id="3destroyer" />
+              <input
+                type="radio"
+                name="shipType"
+                id="3destroyer"
+                @change="setShipType"
+                disabled
+              />
               <label for="3destroyer" class="destroyer">Destroyer</label>
             </div>
             <div>
-              <input type="radio" name="shipType" id="3submarine" />
+              <input
+                type="radio"
+                name="shipType"
+                id="3submarine"
+                @change="setShipType"
+                disabled
+              />
               <label for="3submarine" class="submarine">Submarine</label>
             </div>
             <div>
-              <input type="radio" name="shipType" id="2patrolBoat" />
+              <input
+                type="radio"
+                name="shipType"
+                id="2patrolBoat"
+                @change="setShipType"
+                disabled
+              />
               <label for="2patrolBoat" class="patrolBoat">Patrol Boat</label>
             </div>
             <p class="h5 my-4">Ship orientation:</p>

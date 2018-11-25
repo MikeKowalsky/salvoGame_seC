@@ -110,6 +110,10 @@ const printGrids = data => {
           document.querySelector("#playersGrid").querySelectorAll("td")
         ).filter(td => td.id.length >= 2 && !td.id.charAt(0).match(/\d/));
 
+        document
+          .querySelectorAll("input[name=shipType]")
+          .forEach(input => (input.disabled = false));
+
         this.playersCellsArr.forEach(td =>
           td.addEventListener("mouseover", this.printMouseoverShipMark)
         );
@@ -197,6 +201,14 @@ const printGrids = data => {
           );
       },
       handleMouseClick(e) {
+        //
+        //
+        //
+        // wywalić Array.from - moge robić forEach na nodelist
+        // zrobić ten ship type we funkcji
+        //
+        //
+
         e.preventDefault();
         console.log(`clicked ${e.target.id}`);
         const oneShipObject = {
@@ -211,7 +223,7 @@ const printGrids = data => {
         // marking on a grid
         this.saveAndMarkShip();
 
-        // disable this radio button
+        // disable & strikethrough current radio button
         const thisInput = Array.from(
           document.querySelectorAll("input[name=shipType]")
         ).filter(inp => inp.id.includes(this.shipType));
@@ -230,11 +242,74 @@ const printGrids = data => {
         if (this.arrToSend.length == 5) {
           this.showSaveShipsButton = true;
         }
+
+        //prepare to drag
+        if (this.arrToSend.length > 0) {
+          // console.log(`readyToDrag ${this.shipType}`);
+          this.playersCellsArr.forEach(td => {
+            if (td.classList.contains("ship")) {
+              td.addEventListener("click", this.dragShip);
+            }
+          });
+        }
       },
       saveAndMarkShip() {
-        this.shipLocationsArrayToMark.forEach(td =>
-          document.querySelector(`#${td}`).classList.add("ship")
+        this.shipLocationsArrayToMark.forEach(td => {
+          const oneShipPart = document.querySelector(`#${td}`);
+          oneShipPart.classList.add("ship");
+          oneShipPart.setAttribute("data-shipType", `${this.shipType}`);
+        });
+      },
+      dragShip(e) {
+        const shipToDrag = e.target.dataset.shiptype;
+        console.log({ shipToDrag });
+
+        //remove ship class add eventListener from grid elements
+        const draggedShipArr = this.playersCellsArr.filter(
+          td => td.dataset.shiptype == shipToDrag
         );
+
+        const draggedShipLength = draggedShipArr.length;
+
+        draggedShipArr.forEach(td => {
+          td.classList.remove("ship");
+          td.removeEventListener("click", this.dragShip);
+        });
+
+        //remove ship from arrToSend
+        const copyOfArrToSend = [...this.arrToSend];
+        console.log({ copyOfArrToSend });
+        this.arrToSend = copyOfArrToSend.filter(
+          shipObj => shipObj.shipType != shipToDrag
+        );
+        console.log(this.arrToSend);
+
+        //activate radio button again
+        document.querySelectorAll('input[name="shipType"]').forEach(input => {
+          if (input.id.includes(shipToDrag)) {
+            console.log(input);
+            input.disabled = false;
+          }
+        });
+        document
+          .querySelector(`.${shipToDrag}`)
+          .classList.remove("strikethrough");
+
+        //run placeShip function again
+      },
+      setShipType() {
+        // deactivate onclick eventList for drag
+        this.playersCellsArr.forEach(td => {
+          if (td.classList.contains("ship")) {
+            td.removeEventListener("click", this.dragShip);
+          }
+        });
+
+        console.log(document.querySelector("input[name=shipType]:checked"));
+        this.shipType = document.querySelector(
+          "input[name=shipType]:checked"
+        ).id;
+        console.log(this.shipType);
       }
     }
   });
