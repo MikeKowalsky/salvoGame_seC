@@ -44,4 +44,8 @@ public class Ship {
     public List<String> getLocations() {
         return locations;
     }
+
+    public long getId() {
+        return id;
+    }
 }

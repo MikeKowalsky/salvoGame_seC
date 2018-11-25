@@ -1,69 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Game</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="styles/game.css">
-</head>
-<body>
-
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="styles/game.css" />
+  </head>
+  <body>
     <div class="container" id="allContent">
+      <h1 class="my-4 text-warning">Salvo game</h1>
 
-        <h1 class="my-4 text-warning">Salvo game</h1>
-
-        <div id="vueInfo">
-            <div class="d-flex justify-content-between">
-                <p class="h4">Welcome back {{ playerName }}!</p>
-                <button class="btn btn-danger btn-sm" @click="backToGameList">back</button>
-            </div>
-            <p class="m-2">Game no. {{ dataIn.game_id }}, created {{ creationDate }}.</p>
-            <p class="m-2">
-                <span>Players: {{ playerName }} vs. </span>
-                <span v-if="opponentName != null">{{ opponentName }}</span>
-                <span v-else>     ( ... waiting for second player)</span>
-            </p>
+      <div id="vueInfo">
+        <div class="d-flex justify-content-between">
+          <p class="h4">Welcome back {{ playerName }}!</p>
+          <button class="btn btn-danger btn-sm" @click="backToGameList">
+            back
+          </button>
         </div>
+        <p class="m-2">
+          Game no. {{ dataIn.game_id }}, created {{ creationDate }}.
+        </p>
+        <p class="m-2">
+          <span>Players: {{ playerName }} vs. </span>
+          <span v-if="opponentName != null">{{ opponentName }}</span>
+          <span v-else> ( ... waiting for second player)</span>
+        </p>
+      </div>
 
-        <div id="vueGrid" class="mt-4 row">
-            <div class="col-sm-12 col-md-6 my-4">
-                <p class="h5">Your battlefield</p>
-                <div>
-                    <table id="playersGrid">
-                        <tr v-for="(letter, index) in columnArr" :key="index">
-                            <td 
-                                v-for="(number, i) in rowArr" :key="i">
-                                <p v-if="letter == '' || number == ''">
-                                    {{ letter }}{{ number }}
-                                </p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div v-if="opponentName != null" class="col-sm-12 col-md-6  my-4">
-                <p class="h5">{{ opponentName }} battlefield</p>
-                <div>
-                    <table id="opponentsGrid">
-                        <tr v-for="(letter, index) in columnArr" :key="index">
-                            <td 
-                                v-for="(number, i) in rowArr" :key="i">
-                                <p v-if="letter == '' || number == ''">
-                                    {{ letter }}{{ number }}
-                                </p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
+      <div id="vueGrid" class="mt-4 row">
+        <div class="col-sm-12 col-md-6 my-4">
+          <p class="h5">Your battlefield</p>
+          <div v-if="shipAlreadyPlaced">
+            <button
+              class="btn btn-danger btn-sm my-4"
+              @click="placeShipsButton()"
+            >
+              Place ships
+            </button>
+            <button
+              v-if="showSaveShipsButton"
+              class="btn btn-danger btn-sm my-4"
+              @click="sendShips()"
+            >
+              Save Ships
+            </button>
+          </div>
+          <div>
+            <table id="playersGrid">
+              <tr v-for="(letter, index) in columnArr" :key="index">
+                <td v-for="(number, i) in rowArr" :key="i">
+                  <p v-if="letter == '' || number == ''">
+                    {{ letter }}{{ number }}
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </div>
         </div>
+        <div v-if="!shipAlreadyPlaced" class="col-sm-12 col-md-6  my-4">
+          <div v-if="opponentName != null">
+            <p class="h5">{{ opponentName }} battlefield</p>
+            <div>
+              <table id="opponentsGrid">
+                <tr v-for="(letter, index) in columnArr" :key="index">
+                  <td v-for="(number, i) in rowArr" :key="i">
+                    <p v-if="letter == '' || number == ''">
+                      {{ letter }}{{ number }}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div v-else class="col-sm-12 col-md-6 my-4">
+          <div class="d-flex flex-column my-margin">
+            <p class="h5 mb-4">Choose ship type:</p>
+            <div>
+              <input
+                type="radio"
+                name="shipType"
+                id="5aircraftCarrier"
+                @change="setShipType"
+                disabled
+              />
+              <label for="5aircraftCarrier" class="aircraftCarrier"
+                >Aircraft Carrier</label
+              >
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="shipType"
+                id="4battleship"
+                @change="setShipType"
+                disabled
+              />
+              <label for="4battleship" class="battleship">Battleship</label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="shipType"
+                id="3destroyer"
+                @change="setShipType"
+                disabled
+              />
+              <label for="3destroyer" class="destroyer">Destroyer</label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="shipType"
+                id="3submarine"
+                @change="setShipType"
+                disabled
+              />
+              <label for="3submarine" class="submarine">Submarine</label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="shipType"
+                id="2patrolBoat"
+                @change="setShipType"
+                disabled
+              />
+              <label for="2patrolBoat" class="patrolBoat">Patrol Boat</label>
+            </div>
+            <p class="h5 my-4">Ship orientation:</p>
+            <div>
+              <input type="radio" name="shipOrientation" id="hor" checked />
+              <label for="hor">Horizontal</label>
+            </div>
+            <div>
+              <input type="radio" name="shipOrientation" id="ver" />
+              <label for="ver">Vertical</label>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-   
+
     <script src="scripts/vue.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
     <script src="scripts/game.js"></script>
-    
-</body>
+  </body>
 </html>
